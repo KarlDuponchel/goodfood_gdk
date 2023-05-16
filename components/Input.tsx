@@ -20,7 +20,7 @@ export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
     <input
       ref={ref}
       className={classNames(
-        "block border bg-zinc-200 border-black p-1 w-full text-sm rounded-full disabled:opacity-50 transition h-10 focus:outline-none placeholder-black indent-4",
+        "block border bg-zinc-200 border-black text-black p-1 w-full text-sm rounded-full disabled:opacity-50 transition h-10 focus:outline-none placeholder-black indent-4",
         className
       )}
       {...props}
