@@ -1,10 +1,5 @@
-/*!
- * @author Karl Duponchel
- * @copyright 2021-présent PC Partners
- */
-
 import { ComponentProps, forwardRef } from "react";
-import { classNames } from "./_utils";
+import { classNames } from "../_utils";
 
 /**
  * Les propriétés du composant `BaseInput`.

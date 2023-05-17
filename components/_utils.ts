@@ -1,8 +1,3 @@
-/*!
- * @author Karl Duponchel
- * @copyright 2021-présent PC Partners
- */
-
 /**
  * Réduit un ensemble de classes CSS conditionnelles.
  *
