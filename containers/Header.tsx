@@ -16,6 +16,7 @@ export function Header(): ReactElement {
     const [potentialAddresses, setPotentialAddresses] = useState<any[]>([]);
     const [nameAddress, setNameAddress] = useState<string>("");
     const [toogleAddress, setToogleAddress] = useState<boolean>(false);
+    const [toogleAccount, setToogleAccount] = useState<boolean>(false);
 
     useEffect(() => {
         if (localStorage.getItem("address")) {
@@ -92,16 +93,32 @@ export function Header(): ReactElement {
                     {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
                 </div>
             </div>
-            <div className="w-1/4 h-full flex justify-end gap-10 items-center">
-                <a href="/commands">
-                    <InboxIcon className="w-6 text-black" />
-                </a>
-                <a href="/basket">
-                    <ShoppingCartIcon className="w-6 text-black" />
-                </a>
-                <a href="/account">
-                    <UserCircleIcon className="w-6 text-black" />
-                </a>
+            <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center">
+                {!toogleAccount ? (
+                    <>
+                        <a href="/commands">
+                            <InboxIcon className="w-6 text-black" />
+                        </a>
+                        <a href="/basket">
+                            <ShoppingCartIcon className="w-6 text-black" />
+                        </a>
+                        <span className="cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)}>
+                            <UserCircleIcon className="w-6 text-black" />
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <a className="cursor-pointer hover:underline" href="/account">
+                            Mon compte
+                        </a>
+                        <button className="hover:underline">
+                            Déconnexion
+                        </button>
+                        <span>
+                            <XMarkIcon className="w-5 text-black cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)} />
+                        </span>
+                    </>
+                )}
             </div>
         </div>
         )
