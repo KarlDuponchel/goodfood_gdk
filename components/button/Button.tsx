@@ -36,7 +36,7 @@ export const BaseButton = forwardRef<HTMLButtonElement, ButtonProps>(({label, va
 
     return (
         <button ref={ref} className={classNames(
-            `${bgColor} ${bgColor == "bg-black" ? 'text-white' : 'text-black'} p-2 rounded-md text-center font-bold border border-primary`, className)} {...props}>
+            `${bgColor} p-2 ${bgColor == "bg-black" ? 'text-white border border-black' : 'text-black border border-primary'} rounded-md text-center font-bold`, className)} {...props}>
             {label}
         </button>
     );

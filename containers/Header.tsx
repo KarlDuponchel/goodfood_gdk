@@ -5,18 +5,33 @@ import logo from "../images/logoBlackPng.png";
 import { BaseInput } from "@/components/input/Input";
 import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { autocompleteAddresses } from "@/services/Geolocate";
-import { InputDatalist } from "@/components/input/InputDatalist";
+import { BaseButton } from "@/components/button/Button";
+import { useRouter } from "next/navigation";
 
 export function Header(): ReactElement {
 
+    //Verif user connexion
+    const getUser = true;
+
+    //Router next.js
+    const router = useRouter();
+
     //Ref inputs
     const refAddress = useRef<HTMLInputElement>(null);
+    const refRestaurant = useRef<HTMLInputElement>(null);
     
     //Constantes
     const [potentialAddresses, setPotentialAddresses] = useState<any[]>([]);
     const [nameAddress, setNameAddress] = useState<string>("");
     const [toogleAddress, setToogleAddress] = useState<boolean>(false);
     const [toogleAccount, setToogleAccount] = useState<boolean>(false);
+    const [cardProducts, setCardProducts] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (localStorage.getItem("product")) {
+            setCardProducts(JSON.parse(localStorage.getItem("product") as string));
+        }
+    }, []);
 
     useEffect(() => {
         if (localStorage.getItem("address")) {
@@ -73,7 +88,7 @@ export function Header(): ReactElement {
                             {potentialAddresses.map((address, key) => {
                                 const nameAddress = `${address.address_line1}, ${address.address_line2}`;
                                 return (
-                                    <div className={`flex flex-col justify-between ${key !== potentialAddresses.length - 1 ? `border-b border-zinc-300` : ""} cursor-pointer text-sm`} key={key}>
+                                    <div className={`flex flex-col transition duration-100 justify-between hover:bg-zinc-300 ${key !== potentialAddresses.length - 1 ? `border-b border-zinc-300` : ""} cursor-pointer text-sm`} key={key}>
                                         <span onClick={() => setAddress(nameAddress)}>{`${nameAddress}`}</span>
                                     </div>
                                 )
@@ -88,19 +103,27 @@ export function Header(): ReactElement {
                     </datalist>*/}
                 </div>
                 <div className="w-1/2 relative">
-                    <BaseInput className="w-96" placeholder="Rechercher parmis nos restaurants"/>
+                    <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
                     <XMarkIcon onClick={removeAddress} className="absolute right-3 top-[7px] p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" />
                     {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
                 </div>
             </div>
             <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center">
-                {!toogleAccount ? (
+                {!getUser ? (
+                    <>
+                        <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="transparent"/>
+                        <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>
+                    </>
+                ) : !toogleAccount ? (
                     <>
                         <a href="/commands">
                             <InboxIcon className="w-6 text-black" />
                         </a>
-                        <a href="/basket">
+                        <a className="relative" href="/basket">
                             <ShoppingCartIcon className="w-6 text-black" />
+                            {cardProducts.length > 0 ? (
+                                <span className="absolute font-bold animate-bounce flex justify-center items-center w-4 h-4 text-sm rounded-full bg-primary -top-2 -right-2">{cardProducts.length}</span>
+                            ) : ""}
                         </a>
                         <span className="cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)}>
                             <UserCircleIcon className="w-6 text-black" />
@@ -115,7 +138,7 @@ export function Header(): ReactElement {
                             Déconnexion
                         </button>
                         <span>
-                            <XMarkIcon className="w-5 text-black cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)} />
+                            <XMarkIcon className="w-7 text-black cursor-pointer hover:bg-zinc-200 rounded-full p-1" onClick={() => setToogleAccount(!toogleAccount)} />
                         </span>
                     </>
                 )}
