@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
 import logo from "../images/logoBlackPng.png";
 import { BaseInput } from "@/components/input/Input";
 import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -8,7 +8,11 @@ import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
 
-export function Header(): ReactElement {
+export type HeaderProps = {
+    toogle?: boolean;
+}
+
+export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
     //Verif user connexion
     const getUser = true;
@@ -31,7 +35,7 @@ export function Header(): ReactElement {
         if (localStorage.getItem("product")) {
             setCardProducts(JSON.parse(localStorage.getItem("product") as string));
         }
-    }, []);
+    }, [toogle]);
 
     useEffect(() => {
         if (localStorage.getItem("address")) {
@@ -63,6 +67,7 @@ export function Header(): ReactElement {
         refAddress.current.value = address;
         setPotentialAddresses([]);
 
+        setToogleAddress(!toogleAddress);
         localStorage.setItem("address", address);
     }
     const removeAddress = () => {
@@ -74,8 +79,13 @@ export function Header(): ReactElement {
         setToogleAddress(!toogleAddress);
     }
 
+    const removeRestaurants = () => {
+        if (!refRestaurant.current) return;
+        refRestaurant.current.value = "";
+    }
+
     return (
-        <div className="sticky flex justify-center items-center w-full top-0 bg-inherit px-8 py-1 h-20 shadow-md">
+        <div className="sticky flex justify-center items-center w-full top-0 z-50 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center">
                 <a href="/"><img src={logo.src} alt="Logo du site" width={140} /></a>
             </div>
@@ -104,7 +114,7 @@ export function Header(): ReactElement {
                 </div>
                 <div className="w-1/2 relative">
                     <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
-                    <XMarkIcon onClick={removeAddress} className="absolute right-3 top-[7px] p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" />
+                    <XMarkIcon onClick={removeRestaurants} className="absolute right-3 top-[7px] p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" />
                     {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
                 </div>
             </div>
