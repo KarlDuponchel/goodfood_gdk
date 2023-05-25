@@ -4,11 +4,6 @@ import { Footer } from '@/containers/Footer'
 import { Header } from '@/containers/Header'
 import { ProductCard } from '@/containers/products/ProductCard'
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import logoBurger from '../images/burger.jpg';
-import logoBurger2 from '../images/burger2.jpg';
-import logoPizza from '../images/pizza.jpeg';
-import logoPasta from '../images/pasta.jpg';
-import logoSalade from '../images/salade.jpeg';
 import logo404 from '../images/404.webp';
 import { useEffect, useState } from 'react';
 import { getProducts } from '@/services/Product';
@@ -29,6 +24,12 @@ export default function Home() {
     } else {
       setUpdateShoppingCart(!n);
     }
+  }
+
+  if (!products) {
+    return (
+      <div>Chargement...</div>
+    )
   }
 
   return (

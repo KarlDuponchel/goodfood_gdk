@@ -1,9 +1,8 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
-import logoBurger from "../../images/burger.jpg";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
-import { getProductById } from "@/services/Product";
+import { getIngredientById, getIngredientsByProduct, getProductById } from "@/services/Product";
 import logo404 from '../../images/404.webp';
 
 export type ProductDescProps = {
@@ -11,9 +10,14 @@ export type ProductDescProps = {
      * Product id
      */
     id: number;
+
+    /**
+     * Fonction de mise à jour du panier
+     */
+    onUpdateCart: (n: any) => void;
 }
 
-export const ProductDesc: FunctionComponent<ProductDescProps> = ({id}) => {
+export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCart}) => {
     //Ref
     const refNbProduct = useRef<HTMLSelectElement>(null);
     
@@ -21,25 +25,51 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id}) => {
     const [showComposition, setShowComposition] = useState<boolean>(false);
     const [showDescription, setShowDescription] = useState<boolean>(false);
 
-    //getProduct avec l'id, quand y'a les APIs
+    //Constantes
     const [product, setProduct] = useState<any>();
+    const [ingredientsIds, setIngredientsIds] = useState<any[]>([]);
+    const [ingredients, setIngredients] = useState<any[]>([]);
     const [imageProduct, setImageProduct] = useState<string>("");
 
     useEffect(() => {
+        setIngredients([]);
         getProductById(id).then((product) => { setProduct(product) });
+        getIngredientsByProduct(id).then((ingredients) => { setIngredientsIds(ingredients.data) });
     }, [])
+
+    useEffect(() => {
+        if (!ingredientsIds) return;
+        let ingredientsToPush: any[] = [];
+        for (let i = 0; i < ingredientsIds.length; i++) {
+            getIngredientById(ingredientsIds[i].id_ingredient).then((ingredient) => {
+                ingredientsToPush.push(ingredient);
+            });
+        }
+        setIngredients(ingredientsToPush);
+    }, [ingredientsIds])
+
+    useEffect(() => {
+        if (!product) return;
+        if (product.image == "") {
+            setImageProduct(logo404.src);
+        } else {
+            setImageProduct(logo404.src);
+        }
+    }, [product]);
 
     //Ajouter au panier
     const addToCard = () => {
-        if (!refNbProduct.current) return;
-
+        if (!refNbProduct.current || !product) return;
+        onUpdateCart(true);
         let nbProduct = refNbProduct.current.value;
-        let product = {
+        console.log(product.price);
+        let productToAdd = {
             //Mettre à jour avec les champs du plat
             id: id,
-            name: "Le Cheeseburger",
+            name: product.name,
             nbProduct: nbProduct,
-            price: 14.99
+            price: product.price,
+            image: imageProduct
         }
 
         if (localStorage.getItem("product")) {
@@ -52,29 +82,35 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id}) => {
                     return;
                 }
             }
-            products.push(product);
+            products.push(productToAdd);
             localStorage.setItem("product", JSON.stringify(products));
         } else {
             let products = [];
-            products.push(product);
+            products.push(productToAdd);
             localStorage.setItem("product", JSON.stringify(products)); 
         }
     }
 
+    /**
+     * Fonction pour afficher la composition du produit
+     */
     const handleShowComposition = () => {
         setShowComposition(!showComposition);
     }
 
+    /**
+     * Fonction pour afficher la description du produit
+     */
     const handleShowDescription = () => {
         setShowDescription(!showDescription);
     }
 
-    if (!product) return (<div>Chargement...</div>)
+    if (!product || !ingredientsIds || !ingredients) return (<div>Chargement...</div>)
 
     return (
         <div className="w-3/4 h-96 bg-zinc-200 rounded-md flex shadow-lg">
             <div className="w-1/3 h-full">
-                <img src={logoBurger.src} className="w-full h-full object-cover rounded-l-md" />
+                <img src={imageProduct} className="w-full h-full object-cover rounded-l-md" />
             </div>
             <div className="w-2/4 h-full flex flex-col pt-5 pl-10">
                 <div className="w-full flex justify-between font-black text-lg">
@@ -82,7 +118,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id}) => {
                     <span>{product.price}€</span>
                 </div>
                 <div className="w-full text-sm">
-                    <span>{/*Nom et adresse du restaurant*/}
+                    <span className="bg-red-500">{/*Nom et adresse du restaurant*/}
                         BurgCity - 6 rue de la République, 76000 Rouen
                     </span>
                 </div>
@@ -92,14 +128,13 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id}) => {
                 </div>
                 {showComposition && (
                     /*Avec les infos produits*/
-                    <div className={`w-full pl-8 transition-all ease-in-out`}>    
-                        <ul className="list-disc">
-                            <li>Pain sésame complet français</li>
-                            <li>Burger boeuf 30% MG</li>
-                            <li>Bacon</li>
-                            <li>Salade fraîche</li>
-                            <li>Tomate fraîche</li>
-                        </ul>
+                    <div className={`w-full pl-8 transition-all ease-in-out`}>
+                        {ingredients.map((ingredient, key) => (
+                            <ul key={key} className="list-disc">
+                                <li>{ingredient.name}</li>
+                            </ul>
+                            )
+                        )}       
                     </div>
                 )}
                 <div className="flex justify-between pt-2">

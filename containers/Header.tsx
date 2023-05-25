@@ -84,6 +84,13 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
         refRestaurant.current.value = "";
     }
 
+    const disconnect = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("address");
+        localStorage.removeItem("product");
+        router.push("/connect");
+    }
+
     return (
         <div className="sticky flex justify-center items-center w-full top-0 z-50 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center">
@@ -144,7 +151,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         <a className="cursor-pointer hover:underline" href="/account">
                             Mon compte
                         </a>
-                        <button className="hover:underline">
+                        <button className="hover:underline" onClick={disconnect}>
                             Déconnexion
                         </button>
                         <span>

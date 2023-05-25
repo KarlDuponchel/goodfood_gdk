@@ -4,10 +4,6 @@ import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 import { ProductDesc } from "@/containers/products/ProductDesc";
 import { ArrowSmallLeftIcon } from "@heroicons/react/24/outline";
-import logoBurger from '../../../images/burger.jpg';
-import logoBurger2 from '../../../images/burger2.jpg';
-import logoPizza from '../../../images/pizza.jpeg';
-import logoSalade from '../../../images/salade.jpeg';
 import { ProductCard } from "@/containers/products/ProductCard";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/services/Product";
@@ -22,7 +18,7 @@ export default function Page({
     const [products, setProducts] = useState<any[]>([]);
   
     useEffect(() => {
-        getProducts().then((result) => setProducts(result.data));
+        getProducts(4).then((result) => setProducts(result.data));
     }, [])
 
     const toogleFromChild = (n: any) => {
@@ -35,7 +31,7 @@ export default function Page({
 
     return (
         <>
-          <Header/>
+          <Header toogle={updateShoppingCart} />
             <div className="p-6 flex flex-col gap-5 min-h-screen">
                 <div className='flex justify-between font-bold text-lg'>
                     <div className="">
@@ -46,15 +42,14 @@ export default function Page({
                     </div>
                 </div>
                 <div className="w-full flex justify-center items-center">
-                    <ProductDesc id={params.slug} />
+                    <ProductDesc id={params.slug} onUpdateCart={toogleFromChild} />
                 </div>
                 <div className="flex justify-center mt-8">
                     <span className="w-10/12 font-black text-lg">Produits qui pourrait vous plaire</span>
                 </div>
                 <div className="w-full flex justify-center items-center">
                     <div className="grid grid-cols-4 gap-4 w-3/4 place-items-center">
-                      {products.splice(0,4).map((product, key) => {
-                        console.log(product);
+                      {products.map((product, key) => {
                         return (
                           <ProductCard key={key} id={product.ID} name={product.name} image={product.image} price={product.price} onUpdateCart={toogleFromChild} />
                         )

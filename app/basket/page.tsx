@@ -90,13 +90,14 @@ export default function Basket() {
                     <div className="w-full flex justify-center items-center">
                     <div className="w-4/6 h-3/4 flex flex-col">
                         {cardProducts.map((product, key) => {
+                            console.log(product);
                             return (
                                 <div key={key} className="w-full border-b border-zinc-300 mt-3">
                                     <div className="flex justify-between">
                                         <div className="flex gap-3">
                                             <div className="mb-2">
                                                 <a href={`/products/${product.id}`} >
-                                                    <img src={logoBurger.src} className="w-16 h-16 bg-no-repeat rounded-full" />
+                                                    <img src={product.image} className="w-16 h-16 bg-no-repeat rounded-full" />
                                                 </a>
                                             </div>
                                             <div className="flex flex-col">
