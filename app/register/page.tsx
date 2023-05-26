@@ -3,10 +3,31 @@
 import { BaseButton } from "@/components/button/Button";
 import { BaseInputConnect } from "@/components/input/InputConnect";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function Register() {
     const router = useRouter();
 
+    const [showPassword, setShowPassword] = useState<string>("password");
+    const [showConfirmPassword, setShowConfirmPassword] = useState<string>("password");
+
+    const handleClickPassword = (type: string) => {
+        if (type == "password") {
+            setShowPassword("text");
+        } else {
+            setShowPassword("password");
+        }
+    }
+
+    const handleClickConfirmPassword = (type: string) => {
+        if (type == "password") {
+            setShowConfirmPassword("text");
+        } else {
+            setShowConfirmPassword("password");
+        }
+    }
+    
     const submitRegister = () => {
         console.log("submit register");
     }
@@ -26,8 +47,20 @@ export default function Register() {
                     <BaseInputConnect label="Nom*" />
                     <BaseInputConnect label="Prenom*" />
                     <BaseInputConnect label="Email*" />
-                    <BaseInputConnect label="Mot de passe*" />
-                    <BaseInputConnect label="Confirmation de mot de passe*" />
+                    <div className="w-full grid place-items-center relative">
+                        <BaseInputConnect label="Mot de passe*" type={showPassword} />
+                        {showPassword == "password" ? (
+                            <EyeIcon onClick={() => handleClickPassword(showPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />) : (
+                            <EyeSlashIcon onClick={() => handleClickPassword(showPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />
+                        )}
+                    </div>
+                    <div className="w-full grid place-items-center relative">
+                        <BaseInputConnect className="" label="Confirmation de mot de passe*" type={showConfirmPassword} />
+                        {showConfirmPassword == "password" ? (
+                            <EyeIcon onClick={() => handleClickConfirmPassword(showConfirmPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />) : (
+                            <EyeSlashIcon onClick={() => handleClickConfirmPassword(showConfirmPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />
+                        )}
+                    </div>
                 </div>
                 <div className="flex justify-center items-center w-full gap-4 mt-7">
                     <BaseButton label="Continuer" className="w-1/3" variant="primary" onClick={submitRegister}/>

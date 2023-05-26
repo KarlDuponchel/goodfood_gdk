@@ -32,7 +32,7 @@ export default function Connect() {
 
     return (
         <div className="bg-bg-food w-full bg-cover h-screen grid place-items-center">
-            <div className="bg-slate-50 w-1/5 h-fit rounded-lg p-4 flex flex-col items-center">
+            <div className="bg-slate-50 w-1/5 h-fit rounded-lg p-4 flex flex-col items-center max-xl:w-1/4 max-lg:w-1/3 max-md:w-1/2 max-sm:w-2/3">
                 <div className="text-center text-3xl font-bold pb-2">
                     <img src={logo.src} alt="Logo de GoodFood" width={120}/>
                 </div>

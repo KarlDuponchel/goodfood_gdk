@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 
 export function Footer(): ReactElement {
       return (
-        <footer className="sticky w-full bottom-0 bg-inherit border-t-2 border-t-gray-200 px-8 py-4 h-16">
+        <footer className="sticky w-full bottom-0 bg-inherit border-t-2 border-t-gray-200 px-8 py-4 h-16 max-md:hidden">
             <div className="flex justify-between items-center w-full h-full font-thin text-xs">
                 <div className="flex justify-center items-center gap-5 text-center w-1/3">
                     <div className="w-full">
@@ -20,7 +20,7 @@ export function Footer(): ReactElement {
                     </div>
                 <div className="flex justify-center items-center">
                     <div>
-                        <span className="cursor-pointer">© 2023 GoodFood</span>
+                        <span className="cursor-pointer">© {new Date().getFullYear()} GoodFood</span>
                     </div>
                 </div>
             </div>

@@ -40,7 +40,7 @@ export default function Home() {
             <span>Une sélection de produit, rien que <span className='text-primary'>pour vous</span></span>
             <AdjustmentsHorizontalIcon className='cursor-pointer w-8 rounded-full p-1 transition-all duration-100 hover:bg-zinc-200' title='Filtres'/>
           </div>
-          <div className='grid grid-cols-5 max-2xl:grid-cols-4 max-xl:grid-cols-3 place-items-center gap-6'>
+          <div className='grid grid-cols-5 max-2xl:grid-cols-4 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 place-items-center gap-6'>
             {products.map((product, key) => {
               let image = "";
 

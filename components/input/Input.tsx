@@ -11,14 +11,17 @@ export type BaseInputProps = Omit<ComponentProps<"input">, "ref">;
  */
 // eslint-disable-next-line react/display-name
 export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(
-  ({ className, ...props }, ref) => (
-    <input
-      ref={ref}
-      className={classNames(
-        "block border bg-zinc-200 border-black text-black p-1 w-full text-sm rounded-full disabled:opacity-50 transition h-10 focus:outline-none placeholder-black indent-4",
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, ...props }, ref) => {
+  return (
+    <div className="flex w-full">
+      <input
+        ref={ref}
+        className={classNames(
+          "block border-y border-l bg-zinc-200 border-black text-black p-1 w-full text-sm rounded-full rounded-r-none disabled:opacity-50 transition h-10 focus:outline-none placeholder-black indent-4",
+          className
+        )}
+        {...props}
+      />
+    </div>
+  )}
 );

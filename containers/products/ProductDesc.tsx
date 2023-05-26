@@ -108,11 +108,11 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     if (!product || !ingredientsIds || !ingredients) return (<div>Chargement...</div>)
 
     return (
-        <div className="w-3/4 h-96 bg-zinc-200 rounded-md flex shadow-lg">
-            <div className="w-1/3 h-full">
+        <div className="w-3/4 h-96 max-lg:h-fit bg-zinc-200 rounded-md flex max-lg:flex-col shadow-lg">
+            <div className="w-1/3 h-full max-lg:w-full">
                 <img src={imageProduct} className="w-full h-full object-cover rounded-l-md" />
             </div>
-            <div className="w-2/4 h-full flex flex-col pt-5 pl-10">
+            <div className="w-2/4 h-full flex flex-col pt-5 pl-10 max-lg:w-full max-lg:pr-10">
                 <div className="w-full flex justify-between font-black text-lg">
                     <span>{product.name}</span>
                     <span>{product.price}€</span>
@@ -148,9 +148,9 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                     </div>
                 )}
             </div>
-            <div className="w-1/6 h-full p-4">
-                <div className="w-full h-full flex justify-center items-end">
-                    <div className="w-full flex flex-col gap-2">
+            <div className="w-1/6 max-lg:w-full h-full p-4">
+                <div className="h-full flex justify-center items-end max-lg:justify-end">
+                    <div className="w-full flex flex-col gap-2 max-lg:w-auto">
                         <div className="w-full flex justify-end">
                             <BaseNbSelect ref={refNbProduct} className="justify-end" />
                         </div>

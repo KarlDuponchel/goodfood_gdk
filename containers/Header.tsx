@@ -3,7 +3,7 @@
 import { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
 import logo from "../images/logoBlackPng.png";
 import { BaseInput } from "@/components/input/Input";
-import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon, Bars3Icon, ArrowRightOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,9 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     const [toogleAddress, setToogleAddress] = useState<boolean>(false);
     const [toogleAccount, setToogleAccount] = useState<boolean>(false);
     const [cardProducts, setCardProducts] = useState<any[]>([]);
+    const [showMenu, setShowMenu] = useState<boolean>(false);
+    const [showSearch, setShowSearch] = useState<string>("w-full");
+    const [showAddress, setShowAddress] = useState<string>("hidden");
 
     useEffect(() => {
         if (localStorage.getItem("product")) {
@@ -84,6 +87,16 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
         refRestaurant.current.value = "";
     }
 
+    const handleShowSearch = () => {
+        if (showAddress == "w-full") {
+            setShowAddress("hidden");
+            setShowSearch("w-full");
+        } else {
+            setShowAddress("w-full");
+            setShowSearch("hidden");
+        }
+    }
+
     const disconnect = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("address");
@@ -92,16 +105,19 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     }
 
     return (
-        <div className="sticky flex justify-center items-center w-full top-0 z-50 bg-inherit px-8 py-1 h-20 shadow-md">
+        <div className="sticky flex justify-between items-center w-full top-0 z-50 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center">
                 <a href="/"><img src={logo.src} alt="Logo du site" width={140} /></a>
             </div>
             <div className="w-2/4 flex justify-center items-center gap-4 h-full">
-                <div className="w-1/2 relative">
+                <div className={`w-1/2 relative max-lg:${showAddress} flex`}>
                     <BaseInput ref={refAddress} className="w-96" placeholder={nameAddress} list="addresses" onChange={handleChangeAddress} />
-                    <XMarkIcon onClick={removeAddress} className="absolute right-3 top-[7px] p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" />
+                    <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                        <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeAddress} />
+                    </span>
+                    <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {potentialAddresses && potentialAddresses.length > 0 ? (
-                        <div className="absolute bg-zinc-200 w-11/12 ml-4 p-1 rounded-b-lg">
+                        <div className="absolute bg-zinc-200 top-10 w-11/12 ml-4 p-1 rounded-b-lg">
                             {potentialAddresses.map((address, key) => {
                                 const nameAddress = `${address.address_line1}, ${address.address_line2}`;
                                 return (
@@ -112,20 +128,17 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                             })}
                         </div>
                         ) : ""}
-                        {/*
-                    <datalist id={`addresses`} className="bg-zinc-200 w-11/12 p-1 rounded-b-lg">
-                        {potentialAddresses.map((value, index) => (
-                            <option key={index} value={`${value.address_line1}, ${value.address_line2}`} />
-                        ))}
-                    </datalist>*/}
                 </div>
-                <div className="w-1/2 relative">
+                <div className={`w-1/2 max-lg:${showSearch} flex`}>
                     <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
-                    <XMarkIcon onClick={removeRestaurants} className="absolute right-3 top-[7px] p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" />
+                    <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                        <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeRestaurants} />
+                    </span>
+                    <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
                 </div>
             </div>
-            <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center">
+            <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
                 {!getUser ? (
                     <>
                         <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="transparent"/>
@@ -159,6 +172,29 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         </span>
                     </>
                 )}
+            </div>
+            <div className="max-lg:flex max-lg:w-1/12 justify-end items-center hidden w-1/4 relative">
+                <Bars3Icon className="cursor-pointer w-7" onClick={() => setShowMenu(!showMenu)} />
+                {showMenu ? (
+                <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
+                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <ShoppingCartIcon className="w-5" />
+                        <a href="/basket">Panier</a>
+                    </div>
+                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <InboxIcon className="w-5" />
+                        <a href="/commands">Mes commandes</a>
+                    </div>
+                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <UserCircleIcon className="w-5" />
+                        <a href="/account">Mon compte</a>
+                    </div>
+                    <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <ArrowRightOnRectangleIcon className="w-5" />
+                        <span onClick={disconnect}>Déconnexion</span>
+                    </div>
+                </div>
+            ): ""}
             </div>
         </div>
         )
