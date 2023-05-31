@@ -1,3 +1,5 @@
+'use client';
+
 import './globals.css'
 import { Kanit } from 'next/font/google'
 
@@ -21,10 +23,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  //Verif user
+
   return (
-    <html lang="fr">
-      <body className={inter.className}>{children}</body>
-    </html>
+  <html lang="fr">
+    <head>
+      <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    </head>
+    <body className={inter.className}>{children}</body>
+  </html>
   )
 }

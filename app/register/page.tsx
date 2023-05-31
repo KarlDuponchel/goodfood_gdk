@@ -38,7 +38,7 @@ export default function Register() {
 
     return (
         <div className="bg-bg-food w-full bg-cover h-screen grid place-items-center">
-            <div className="bg-slate-50 w-2/5 h-fit rounded-lg p-8 flex flex-col items-center">
+            <div className="bg-slate-50 w-2/5 h-fit rounded-lg p-8 flex flex-col items-center max-xl:w-3/5 max-lg:w-4/5">
                 <div className="text-center text-3xl w-3/4 h-1/6 grid place-items-center font-bold pb-4">
                     <span>Rejoignez-nous, en renseignant vos coordonnées</span>
                 </div>

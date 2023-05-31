@@ -2,6 +2,7 @@
 
 import { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
 import logo from "../images/logoBlackPng.png";
+import smallLogo from "../images/logoGF.png";
 import { BaseInput } from "@/components/input/Input";
 import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon, Bars3Icon, ArrowRightOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { autocompleteAddresses } from "@/services/Geolocate";
@@ -105,16 +106,21 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     }
 
     return (
-        <div className="sticky flex justify-between items-center w-full top-0 z-50 bg-inherit px-8 py-1 h-20 shadow-md">
-            <div className="w-1/4 h-full flex justify-start items-center">
+        <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
+            <div className="w-1/4 h-full flex justify-start items-center max-md:hidden">
                 <a href="/"><img src={logo.src} alt="Logo du site" width={140} /></a>
             </div>
-            <div className="w-2/4 flex justify-center items-center gap-4 h-full">
-                <div className={`w-1/2 relative max-lg:${showAddress} flex`}>
-                    <BaseInput ref={refAddress} className="w-96" placeholder={nameAddress} list="addresses" onChange={handleChangeAddress} />
-                    <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
-                        <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeAddress} />
-                    </span>
+            <div className="w-1/6 h-full hidden justify-start items-center max-md:flex">
+                <a href="/"><img src={smallLogo.src} alt="Logo du site" width={80} /></a>
+            </div>
+            <div className="w-2/4 flex justify-center items-center gap-4 h-full max-md:w-4/6">
+                <div className={`w-1/2 relative max-lg:${showAddress} flex gap-2`}>
+                    <div className="flex w-full">
+                        <BaseInput ref={refAddress} className="w-96" placeholder={nameAddress} list="addresses" onChange={handleChangeAddress} />
+                        <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                            <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeAddress} />
+                        </span>
+                    </div>
                     <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {potentialAddresses && potentialAddresses.length > 0 ? (
                         <div className="absolute bg-zinc-200 top-10 w-11/12 ml-4 p-1 rounded-b-lg">
@@ -129,11 +135,13 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         </div>
                         ) : ""}
                 </div>
-                <div className={`w-1/2 max-lg:${showSearch} flex`}>
-                    <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
-                    <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
-                        <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeRestaurants} />
-                    </span>
+                <div className={`w-1/2 max-lg:${showSearch} flex gap-2`}>
+                    <div className="flex w-full">
+                        <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
+                        <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                            <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeRestaurants} />
+                        </span>
+                    </div>
                     <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
                 </div>

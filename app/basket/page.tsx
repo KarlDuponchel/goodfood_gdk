@@ -1,14 +1,28 @@
 'use client';
 
-import { BaseNbSelect } from "@/components/input/SelectNbProduct";
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
-import { useEffect, useRef, useState } from "react";
-import logoBurger from '../../images/burger.jpg';
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
 import { ProductBasket } from "@/containers/products/ProductBasket";
+import { Popup } from "@/components/blocks/Popup";
+import { useRouter } from "next/navigation";
 
 export default function Basket() {
+
+    const router = useRouter();
+
+    //Constantes pour le modal Popup
+    const [ouvrir, setOuvrir] = useState(false);
+
+    const open = (event: FormEvent) => {
+        event.preventDefault();
+        setOuvrir(true);
+    };
+
+    const fermer = () => {
+        setOuvrir(false);
+    };
 
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
 
@@ -52,6 +66,12 @@ export default function Basket() {
         )
     }
 
+    const submitCommand = () => {
+        //TODO: Envoyer la commande
+        router.push(`/commands/${8}`);
+        setOuvrir(false);
+    }
+
     return (
         <>
             <Header toogle={updateShoppingCart} />
@@ -64,7 +84,7 @@ export default function Basket() {
                         Votre panier est vide
                     </div>
                 ) : (
-                    <div className="w-full flex justify-center items-center">
+                <div className="w-full flex justify-center items-center">
                     <div className="w-4/6 max-md:w-5/6 max-sm:w-11/12 h-3/4 flex flex-col">
                         {cardProducts.map((product, key) => {
                             return (
@@ -78,13 +98,21 @@ export default function Basket() {
                                     <span className="font-bold">{getTotalPrice()}€</span>
                                 </div>
                                 <div className="">
-                                    <BaseButton className="w-full transition-all duration-75 hover:scale-105" variant="primary" label="Commander" />
+                                    <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 )}
+                <Popup 
+                    btnLbl="Confirmer" 
+                    title="Confirmation de commande" 
+                    content={`Souhaitez-vous vraiment commander ${cardProducts.length} article${cardProducts.length > 1 ? "s" : ""} pour un montant de ${getTotalPrice()}€ ?`} 
+                    ouvrir={ouvrir} 
+                    fermer={fermer} 
+                    submit={submitCommand} 
+                />
             </div>
             <Footer />
         </>

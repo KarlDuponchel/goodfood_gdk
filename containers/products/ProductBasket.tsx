@@ -38,7 +38,9 @@ export type ProductBasketProps = {
     onUpdateCart: (n: any) => void;
 }
 
-export const ProductBasket: FunctionComponent<ProductBasketProps> = ({id, name, price, nbProduct, image, onUpdateCart}) => {
+export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
+    id, name, price, nbProduct, image, onUpdateCart,
+}) => {
 
     //Ref
     const refBaseNbSelect = useRef<HTMLSelectElement>(null);
