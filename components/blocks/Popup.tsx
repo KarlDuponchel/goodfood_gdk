@@ -57,7 +57,7 @@ export type PopupProps = ComponentProps<"div"> & {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="inline-block overflow-hidden sm:my-8 sm:w-full sm:max-w-lg text-left align-bottom sm:align-middle bg-white rounded-lg shadow-xl transition-all transform">
+              <div className="z-50 inline-block overflow-hidden sm:my-8 sm:w-full sm:max-w-lg align-bottom sm:align-middle bg-white rounded-lg shadow-xl transition-all transform">
                 <div className="sm:p-6 px-4 pt-5 pb-4 sm:pb-4 bg-white">
                   <div className="sm:flex sm:items-start">
                     <div className="flex flex-shrink-0 justify-center items-center mx-auto sm:mx-0 w-12 sm:w-10 h-12 sm:h-10 bg-primary rounded-full">

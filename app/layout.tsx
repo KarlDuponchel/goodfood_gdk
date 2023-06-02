@@ -14,7 +14,8 @@ export const metadata = {
       template: 'GoodFood | %s',
     },
     icons: {
-        icon: '/favicon.ico',
+        icon: '/icon.ico',
+        default: '/icon.ico',
     },
   };
 
@@ -28,6 +29,7 @@ export default function RootLayout({
   <html lang="fr">
     <head>
       <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+      <title>{metadata.title.default}</title>
     </head>
     <body className={inter.className}>{children}</body>
   </html>

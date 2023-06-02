@@ -27,11 +27,15 @@ export default function Basket() {
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
 
     const [cardProducts, setCardProducts] = useState<any[]>([]);
+    const [adresseClient, setAdresseClient] = useState<string>("");
     const [loading, setLoading] = useState<string>("pulse");
 
     useEffect(() => {
         if (localStorage.getItem("product")) {
             setCardProducts(JSON.parse(localStorage.getItem("product") as string));
+        }
+        if (localStorage.getItem("address")) {
+            setAdresseClient(localStorage.getItem("address") as string);
         }
         setLoading("none");
     }, [updateShoppingCart]);
@@ -68,8 +72,13 @@ export default function Basket() {
 
     const submitCommand = () => {
         //TODO: Envoyer la commande
-        router.push(`/commands/${8}`);
-        setOuvrir(false);
+        if (adresseClient !== "") {
+            router.push(`/commands/${8}`);
+            setOuvrir(false);
+        } else {
+            alert("Veuillez renseigner une adresse de livraison");
+            setOuvrir(false);
+        }
     }
 
     return (
