@@ -1,10 +1,12 @@
-'use client';
-
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 
-export default function Legal() {
+export const metadata = {
+    title: "Mentions légales",
+}
 
+
+export default function Legal() {
     return (
         <>
             <Header />
