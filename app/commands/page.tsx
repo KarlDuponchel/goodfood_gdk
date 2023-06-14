@@ -2,6 +2,11 @@ import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 import { ClockIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
+export const metadata = {
+    title: "Commandes",
+    description: "Page de gestion des commandes",
+}
+
 export default function Commands() {
 
     /*const commands: {

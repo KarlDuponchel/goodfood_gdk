@@ -1,9 +1,11 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
 import { getIngredientById, getIngredientsByProduct, getProductById } from "@/services/Product";
 import logo404 from '../../images/404.webp';
+import { useToast } from "@/components/ui/use-toast";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 export type ProductDescProps = {
     /**
@@ -18,12 +20,10 @@ export type ProductDescProps = {
 }
 
 export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCart}) => {
+    const { toast } = useToast();
+
     //Ref
     const refNbProduct = useRef<HTMLSelectElement>(null);
-    
-    //Constantes
-    const [showComposition, setShowComposition] = useState<boolean>(false);
-    const [showDescription, setShowDescription] = useState<boolean>(false);
 
     //Constantes
     const [product, setProduct] = useState<any>();
@@ -31,20 +31,36 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     const [ingredients, setIngredients] = useState<any[]>([]);
     const [imageProduct, setImageProduct] = useState<string>("");
 
+    //Animations
+    const [rotateDesc, setRotateDesc] = useState<string>("");
+    const [rotateComp, setRotateComp] = useState<string>("");
+
+    //Affichage
+    const [showComposition, setShowComposition] = useState<boolean>(false);
+    const [showDescription, setShowDescription] = useState<boolean>(false);
+
+    /**
+     * Récupère les informations du produit et les ingrédients
+     */
     useEffect(() => {
         setIngredients([]);
         getProductById(id).then((product) => { setProduct(product) });
         getIngredientsByProduct(id).then((ingredients) => { setIngredientsIds(ingredients.data) });
-    }, [])
+    }, [id])
 
+    /**
+     * Récupère les informations des ingrédients
+     */
     useEffect(() => {
-        if (!ingredientsIds) return;
+        if (!ingredientsIds || ingredientsIds.length == 0) return;
+        console.log(ingredientsIds);
         let ingredientsToPush: any[] = [];
         for (let i = 0; i < ingredientsIds.length; i++) {
             getIngredientById(ingredientsIds[i].id_ingredient).then((ingredient) => {
                 ingredientsToPush.push(ingredient);
             });
         }
+        console.log(ingredientsToPush)
         setIngredients(ingredientsToPush);
     }, [ingredientsIds])
 
@@ -57,7 +73,42 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         }
     }, [product]);
 
-    //Ajouter au panier
+    /**
+     * Gère l'affichage de la composition, et les animations
+     */
+    const handleShowComposition = () => {
+        setShowComposition(!showComposition);
+        if (showComposition) {
+            setRotateComp("transform rotate-0");
+        } else {
+            setRotateComp("transform rotate-180");
+        }
+        if (showDescription) {
+            setShowDescription(false);
+            setRotateDesc("transform rotate-0");
+        }
+    }
+
+    /**
+     * Gère l'affichage de la description, et les animations
+     */
+    const handleShowDescription = () => {
+        setShowDescription(!showDescription);
+        if (showDescription) {
+            setRotateDesc("transform rotate-0");
+        } else {
+            setRotateDesc("transform rotate-180");
+        }
+        if (showComposition) {
+            setShowComposition(false);
+            setRotateComp("transform rotate-0");
+        }
+    }
+
+    /**
+     * Gère l'ajout au panier
+     * @returns 
+     */
     const addToCard = () => {
         if (!refNbProduct.current || !product) return;
         onUpdateCart(true);
@@ -89,20 +140,10 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
             products.push(productToAdd);
             localStorage.setItem("product", JSON.stringify(products)); 
         }
-    }
-
-    /**
-     * Fonction pour afficher la composition du produit
-     */
-    const handleShowComposition = () => {
-        setShowComposition(!showComposition);
-    }
-
-    /**
-     * Fonction pour afficher la description du produit
-     */
-    const handleShowDescription = () => {
-        setShowDescription(!showDescription);
+        toast({
+            title: "Produit ajouté au panier",
+            description: `${productToAdd.nbProduct} ${productToAdd.name} ${Number(productToAdd.nbProduct) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`
+        })
     }
 
     if (!product || !ingredientsIds || !ingredients) return (<div>Chargement...</div>)
@@ -110,7 +151,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     return (
         <div className="w-3/4 h-96 max-lg:h-fit bg-zinc-200 rounded-md flex max-lg:flex-col shadow-lg">
             <div className="w-1/3 h-full max-lg:w-full">
-                <img src={imageProduct} className="w-full h-full object-cover rounded-l-md" />
+                <Image src={imageProduct} alt="Image du produit" width={500} height={500} className="w-full h-full object-cover rounded-l-md" />
             </div>
             <div className="w-2/4 h-full flex flex-col pt-5 pl-10 max-lg:w-full max-lg:pr-10">
                 <div className="w-full flex justify-between font-black text-lg">
@@ -122,9 +163,9 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                         BurgCity - 6 rue de la République, 76000 Rouen
                     </span>
                 </div>
-                <div className="flex justify-between pt-8">
+                <div className="flex justify-between pt-8 cursor-pointer hover:underline" onClick={handleShowComposition}>
                     <span className="font-bold">Composition du produit</span>
-                    {showComposition ? <ChevronUpIcon className="w-5 cursor-pointer" onClick={() => setShowComposition(!showComposition)} /> : <ChevronDownIcon className="w-5 cursor-pointer" onClick={handleShowComposition} />} 
+                    <ChevronDownIcon className={`w-5 ${rotateComp} transition-all duration-300`} />
                 </div>
                 {showComposition && (
                     /*Avec les infos produits*/
@@ -137,13 +178,12 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                         )}       
                     </div>
                 )}
-                <div className="flex justify-between pt-2">
+                <div className="flex justify-between pt-4 cursor-pointer hover:underline" onClick={handleShowDescription}>
                     <span className="font-bold">Description</span>
-                    {showDescription ? <ChevronUpIcon className="w-5 cursor-pointer" onClick={() => setShowDescription(!showDescription)} /> : <ChevronDownIcon className="w-5 cursor-pointer" onClick={handleShowDescription} />} 
+                    <ChevronDownIcon className={`w-5 cursor-pointer ${rotateDesc} transition-all duration-300`} />
                 </div>
                 {showDescription && (
-                    /*Avec la description du produit*/
-                    <div className={`w-full pl-4 pt-2 transition-all ease-in-out`}>    
+                    <div className={`w-4/6 pl-4 transition-all duration-300 ease-in-out`}>    
                         <span>{product.description}</span>
                     </div>
                 )}

@@ -1,7 +1,9 @@
-'use client';
-
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
+
+export const metadata = {
+    title: "Mentions légales"
+}
 
 export default function Legal() {
 

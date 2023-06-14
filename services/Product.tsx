@@ -14,7 +14,7 @@ export async function getProducts(limit?: number): Promise<any> {
   let limitString = "";  
   if (limit == undefined) {limitString = "100"} else {limitString = String(limit)};
 
-  const input = `http://gabriel-delahaye.com:5000/products?limit=${limitString}`;
+  const input = `${process.env.api}/products?limit=${limitString}`;
   const response = await fetch(input, { headers: getHeaders() });
 
   if (response.status !== 200) {
@@ -32,7 +32,7 @@ export async function getProducts(limit?: number): Promise<any> {
  * @returns Le produit
  */
 export async function getProductById(id: number): Promise<any> {
-  const input = `http://gabriel-delahaye.com:5000/products/${id}`;
+  const input = `${process.env.api}/products/${id}`;
   const response = await fetch(input, { headers: getHeaders() });
 
   if (response.status !== 200) {
@@ -50,7 +50,7 @@ export async function getProductById(id: number): Promise<any> {
  * @returns 
  */
 export async function getIngredientsByProduct(id: number): Promise<any> {
-  const input = `http://gabriel-delahaye.com:5000/product-ingredients?id_product=${id}`;
+  const input = `${process.env.api}/product-ingredients?id_product=${id}`;
   const response = await fetch(input, { headers: getHeaders() });
 
   if (response.status !== 200) {
@@ -63,7 +63,7 @@ export async function getIngredientsByProduct(id: number): Promise<any> {
 }
 
 export async function getIngredientById(id: number): Promise<any> {
-  const input = `http://gabriel-delahaye.com:5000/ingredients/${id}`;
+  const input = `${process.env.api}/ingredients/${id}`;
   const response = await fetch(input, { headers: getHeaders() });
 
   if (response.status !== 200) {

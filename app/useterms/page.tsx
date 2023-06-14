@@ -1,7 +1,9 @@
-'use client';
-
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
+
+export const metadata = {
+    title: "Conditions d'utlisations"
+}
 
 export default function UseTerms() {
 

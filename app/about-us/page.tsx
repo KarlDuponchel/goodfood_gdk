@@ -1,8 +1,10 @@
-'use client';
-
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 import logoGoodFood from '../../images/logoBlackPng.png';
+
+export const metadata = {
+    title: "A propos de nous"
+}
 
 export default function AboutUs() {
 

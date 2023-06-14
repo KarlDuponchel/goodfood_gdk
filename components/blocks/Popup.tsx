@@ -81,7 +81,7 @@ export type PopupProps = ComponentProps<"div"> & {
                 </div>
                 <div className="sm:flex sm:flex-row-reverse gap-2 py-3 px-4 sm:px-6 text-sm bg-gray-50">
                   <BaseButton
-                    className="font-semibold w-28"
+                    className="font-semibold w-28 max-sm:w-full"
                     label={btnLbl}
                     type="button"
                     variant="primary"

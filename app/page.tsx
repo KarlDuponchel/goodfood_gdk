@@ -24,7 +24,6 @@ export default function Home() {
 
   useEffect(() => {
     setProductsToDisplay(products);
-    console.log("oui")
   }, [products])
 
   const toogleFromChild = (n: any) => {

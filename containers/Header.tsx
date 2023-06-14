@@ -185,18 +185,18 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                 <Bars3Icon className="cursor-pointer w-7" onClick={() => setShowMenu(!showMenu)} />
                 {showMenu ? (
                 <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
-                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                    <a href="/basket" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
                         <ShoppingCartIcon className="w-5" />
-                        <a href="/basket">Panier</a>
-                    </div>
-                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <span>Panier</span>
+                    </a>
+                    <a href="/commands" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
                         <InboxIcon className="w-5" />
-                        <a href="/commands">Mes commandes</a>
-                    </div>
-                    <div className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                        <span>Mes commandes</span>
+                    </a>
+                    <a href="/account" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
                         <UserCircleIcon className="w-5" />
-                        <a href="/account">Mon compte</a>
-                    </div>
+                        <span>Mon compte</span>
+                    </a>
                     <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
                         <ArrowRightOnRectangleIcon className="w-5" />
                         <span onClick={disconnect}>Déconnexion</span>

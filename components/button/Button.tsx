@@ -10,7 +10,7 @@ export type ButtonProps = ComponentProps<"button"> & {
     /**
      * Variants de background du bouton
      */
-    variant: "primary" | "black" | "transparent";
+    variant: "primary" | "black" | "transparent" | "white";
 
     /**
      * Style supplémentaire du bouton si nécessaire.
@@ -32,11 +32,14 @@ export const BaseButton = forwardRef<HTMLButtonElement, ButtonProps>(({label, va
         case "transparent":
             bgColor = "bg-transparent";
             break;
+        case "white":
+            bgColor = "bg-slate-50";
+            break;
     }
 
     return (
         <button ref={ref} className={classNames(
-            `${bgColor} p-2 ${bgColor == "bg-black" ? 'text-white border border-black' : 'text-black border border-primary'} rounded-md text-center font-bold`, className)} {...props}>
+            `${bgColor} p-2 ${bgColor == "bg-black" ? 'text-white border border-black' : bgColor == "bg-slate-50" ? 'text-black border border-black' : 'text-black border border-primary'} rounded-md text-center font-bold`, className)} {...props}>
             {label}
         </button>
     );

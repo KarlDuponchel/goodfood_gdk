@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getCoordinates, getItinary } from "@/services/Geolocate";
 import { ClockIcon, MapIcon } from "@heroicons/react/24/outline";
 import { BaseButton } from "@/components/button/Button";
+import { Progress } from "@/components/ui/progress";
 
 export default function Page({
     params,
@@ -49,6 +50,8 @@ export default function Page({
       pourcentage: number,
     }>();
 
+    //Coordonnées du restaurant
+    //A recup via l'api
     const [coordsRestau, setCoordsRestau] = useState<any>([1.09557,49.44311]);
 
     const [map, setMap] = useState<mapboxgl.Map>();
@@ -100,7 +103,7 @@ export default function Page({
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [1.099971,49.443232],
         zoom: 12.5,
-        accessToken: "pk.eyJ1Ijoia2FybGR1cG9uY2hlbCIsImEiOiJjbGlicWp2dnUwZzVsM3JtdWZ0OWFxYndhIn0.smBViieSG9CHQiWNrBunAw",
+        accessToken: process.env.mapbox_token,
       }))
     }, [userCoordinates])
 
@@ -165,38 +168,45 @@ export default function Page({
               }
             })
           });
-          
-          const geojson = {
-            'type': 'Feature',
-            'properties': {},
-            'geometry': {
-              'type': 'LineString',
-              'coordinates': coords.route,
-            },
-          };
   
-          const source: mapboxgl.GeoJSONSource = map.getSource('source-name') as mapboxgl.GeoJSONSource;
+          const source: mapboxgl.GeoJSONSource = map.getSource('route') as mapboxgl.GeoJSONSource;
   
           if (source) {
-            source.setData(geojson);
+            source.setData({
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: coords.route,
+              },
+            });
           } else {
-            map.addLayer({
-              id: 'route',
-              type: 'line',
-              source: {
-                type: 'geojson',
-                data: geojson
-              },
-              layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-              },
-              paint: {
-                'line-color': '#14BAF4',
-                'line-width': 5,
-                'line-opacity': 0.75
-              }
-            })
+            map.on('load', function () {
+              map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: {
+                  type: 'geojson',
+                  data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                      type: 'LineString',
+                      coordinates: coords.route,
+                    }
+                  }
+                },
+                layout: {
+                  'line-join': 'round',
+                  'line-cap': 'round'
+                },
+                paint: {
+                  'line-color': '#14BAF4',
+                  'line-width': 5,
+                  'line-opacity': 0.75
+                }
+              })
+            });
           } 
         }
       });
@@ -236,11 +246,7 @@ export default function Page({
                         <div className="w-1/2 flex flex-col border-r border-black max-xl:w-full max-xl:border-r-0">
                             <div className="w-full flex flex-col justify-center items-center gap-8 py-8 px-4 border-b border-black">
                                 <span className="font-bold text-xl">{statusCommand?.etat}</span>
-                                <span className="w-4/6 h-5 rounded-full border border-black bg-white relative flex items-center">
-                                  <div className={`${statusCommand?.width} ml-0.5 h-4 bg-black rounded-full absolute text-white flex justify-end items-center font-bold pr-1`}>
-                                    {statusCommand?.pourcentage}%
-                                  </div>
-                                </span>
+                                <Progress className="border border-zinc-400 w-5/6" value={50}/>
                             </div>
                             <div className="w-full h-[420px] relative max-xl:border-b max-xl:border-black" id="map" >
                                 <div className="bg-zinc-200 absolute top-0 left-0 z-[5] p-1 rounded-br-md flex gap-1 font-bold">

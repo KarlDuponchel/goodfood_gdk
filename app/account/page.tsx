@@ -3,6 +3,10 @@ import { BaseInputAccount } from "@/components/input/InputAccount";
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 
+export const metadata = {
+    title: "Mon compte"
+}
+
 export default function Account() {
     //const [user, setUser] = useState<any>();
     
@@ -24,7 +28,7 @@ export default function Account() {
                                 <BaseInputAccount label="Confirmation de mot de passe" defaultValue={"********"} type="password" />
                             </div>
                             <div className="w-full flex justify-end max-sm:justify-center">
-                                <BaseButton className="w-40" label="Sauvegarder" variant="primary" />
+                                <BaseButton className="w-40 hover:scale-105 transition-all duration-150" label="Sauvegarder" variant="primary" />
                             </div>
                         </div>
                     </div>

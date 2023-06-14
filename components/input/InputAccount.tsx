@@ -19,7 +19,7 @@ export const BaseInputAccount = forwardRef<HTMLInputElement, InputAccountProps>(
         <div className="flex flex-col w-11/12 gap-1">
             <label className="text-black font-bold">{label}</label>
             <input
-                className="block border rounded-md bg-white border-zinc-300 text-black p-1 w-full disabled:opacity-50 h-8 focus:outline-none"
+                className={classNames("block border rounded-md bg-white border-zinc-300 text-black p-1 w-full disabled:opacity-50 h-8 focus:outline-none")}
                 {...props}
             />
         </div>

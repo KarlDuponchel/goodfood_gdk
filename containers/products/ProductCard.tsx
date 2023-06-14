@@ -2,9 +2,9 @@
 
 import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
-import { FunctionComponent, use, useEffect, useRef, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import logo404 from '../../images/404.webp';
-import logoB from '../../images/burger.jpg';
+import { useToast } from "@/components/ui/use-toast";
 
 export type ProductCardProps = {
     /**
@@ -34,6 +34,8 @@ export type ProductCardProps = {
 }
 
 export const ProductCard: FunctionComponent<ProductCardProps> = ({id, name, image, price, onUpdateCart}) => {
+    const { toast } = useToast();
+
     const refNbProduct = useRef<HTMLSelectElement>(null);
     const [imageProduct, setImageProduct] = useState<string>("");
 
@@ -77,6 +79,11 @@ export const ProductCard: FunctionComponent<ProductCardProps> = ({id, name, imag
             products.push(product);
             localStorage.setItem("product", JSON.stringify(products)); 
         }
+        toast({
+            variant: "default",
+            title: "Produit ajouté au panier !",
+            description: `${product.nbProduct} ${product.name} ${Number(product.nbProduct) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`
+        })
     }
 
     /**
@@ -104,7 +111,7 @@ export const ProductCard: FunctionComponent<ProductCardProps> = ({id, name, imag
                     <div className="flex gap-2">
                         <div> <BaseNbSelect ref={refNbProduct} /> </div>
                         <BaseButton onClick={addToCard} 
-                        className="h-7 px-1 py-0 flex items-center" variant="primary" label="Ajouter" />
+                        className="h-7 px-1 py-0 flex items-center hover:opacity-80" variant="primary" label="Ajouter" />
                     </div>
                 </div>
             </div>
