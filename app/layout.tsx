@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster';
 import './globals.css'
 import { Kanit } from 'next/font/google'
 
@@ -26,10 +27,12 @@ export default function RootLayout({
   return (
   <html lang="fr">
     <head>
-      <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
-      <title>{metadata.title.default}</title>
+      <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' />
     </head>
-    <body className={inter.className}>{children}</body>
+    <body className={inter.className}>
+      {children}
+      <Toaster />
+    </body>
   </html>
   )
 }

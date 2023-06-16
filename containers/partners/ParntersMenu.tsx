@@ -1,6 +1,6 @@
 "use client";
 
-import logo from "@/images/logoBlackPng.png"
+import logo from "@/images/logoblackv2.png"
 import Image from "next/image"
 import { PlusCircleIcon, ChartBarSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { BaseButton } from "@/components/button/Button";
@@ -16,20 +16,20 @@ export default function PartnersMenu() {
     return (
         <div className="bg-zinc-200 h-full w-[13%] flex flex-col">
             <div className="w-full h-1/5 grid justify-center pt-8">
-                <Image alt="Logo du site" src={logo.src} width={150} height={150} />
+                <Image alt="Logo du site" src={logo.src} width={200} height={200} />
             </div>
-            <div className="w-full h-1/5 flex flex-col gap-4 px-14">
+            <div className="w-full h-1/5 flex flex-col gap-4 px-12">
                 <a href="/" className="flex gap-2 hover:underline underline-offset-4">
-                    <PlusCircleIcon className="w-6" />
-                    <span className="font-bold">Fournitures</span>
+                    <PlusCircleIcon className="w-7" />
+                    <span className="font-bold text-lg">Fournitures</span>
                 </a>
                 <a href="/" className="flex gap-2 hover:underline underline-offset-4">
-                    <ChartBarSquareIcon className="w-6" />
-                    <span className="font-bold">Statistiques</span>
+                    <ChartBarSquareIcon className="w-7" />
+                    <span className="font-bold text-lg">Statistiques</span>
                 </a>
                 <a href="/" className="flex gap-2 hover:underline underline-offset-4">
-                    <UserCircleIcon className="w-6" />
-                    <span className="font-bold">Mon compte</span>
+                    <UserCircleIcon className="w-7" />
+                    <span className="font-bold text-lg">Mon compte</span>
                 </a>
             </div>
             <div className="w-full h-3/5">
