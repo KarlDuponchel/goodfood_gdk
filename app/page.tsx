@@ -88,18 +88,29 @@ export default function Home() {
     <>
       <Header toogle={updateShoppingCart} />
         <div className='p-6 flex flex-col gap-8 min-h-screen'>
-          <div className='flex justify-between'>
+          <div className='flex justify-between relative'>
             <span className='font-bold text-lg text-black'>Une sélection de produit, rien que <span className='text-primary'>pour vous</span></span>
             <div>
               {openFilters ? (
-                <div className='flex items-center gap-4 text-lg'>
-                    <ArrowsUpDownIcon className='w-5 h-5 text-black' />
-                    <span className='cursor-pointer hover:underline' onClick={filterProductsName}>Par nom</span>
-                    <span className='cursor-pointer hover:underline' onClick={filterProductsPrice}>Par prix</span>
-                    <span className='cursor-pointer hover:underline'>Par catégorie</span>
-                    <span className='cursor-pointer hover:underline' onClick={resetFilter}>Réinitialiser</span>
-                    <XMarkIcon className='w-8 h-8 p-1 rounded-full hover:bg-zinc-200 cursor-pointer' onClick={() => setOpenFilters(false)} />
-                </div>
+                <>
+                  <div className='flex items-center gap-4 text-lg max-lg:hidden'>
+                      <ArrowsUpDownIcon className='w-5 h-5 text-black' />
+                      <span className='cursor-pointer hover:underline' onClick={filterProductsName}>Par nom</span>
+                      <span className='cursor-pointer hover:underline' onClick={filterProductsPrice}>Par prix</span>
+                      <span className='cursor-pointer hover:underline'>Par catégorie</span>
+                      <span className='cursor-pointer hover:underline' onClick={resetFilter}>Réinitialiser</span>
+                      <XMarkIcon className='w-8 h-8 p-1 rounded-full hover:bg-zinc-200 cursor-pointer' onClick={() => setOpenFilters(false)} />
+                  </div>
+                  <div className='max-lg:flex hidden flex-col p-1 rounded-md h-fit w-48 absolute top-0 right-0 bg-zinc-200 z-50'>
+                      <div className='w-full flex items-center justify-between border-b border-zinc-300'>
+                        <span className='cursor-pointer hover:underline' onClick={filterProductsName}>Par nom</span>
+                        <XMarkIcon className='w-7 h-7 p-1 rounded-full hover:bg-zinc-200 cursor-pointer' onClick={() => setOpenFilters(false)} />
+                      </div>
+                      <span className='cursor-pointer hover:underline border-b border-zinc-300' onClick={filterProductsPrice}>Par prix</span>
+                      <span className='cursor-pointer hover:underline border-b border-zinc-300'>Par catégorie</span>
+                      <span className='cursor-pointer hover:underline' onClick={resetFilter}>Réinitialiser</span>
+                  </div>
+                </>
               ) : (
                 <AdjustmentsHorizontalIcon className='cursor-pointer w-8 rounded-full p-1 transition-all duration-100 hover:bg-zinc-200 text-black' onClick={() => setOpenFilters(true)} title='Filtres'/>
               )}

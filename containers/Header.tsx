@@ -8,6 +8,7 @@ import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon, Bars3Icon, Arro
 import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export type HeaderProps = {
     toogle?: boolean;
@@ -100,18 +101,16 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
     const disconnect = () => {
         localStorage.removeItem("token");
-        localStorage.removeItem("address");
-        localStorage.removeItem("product");
         router.push("/connect");
     }
 
     return (
         <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center max-md:hidden">
-                <a href="/"><img src={logo.src} alt="Logo du site" width={140} /></a>
+                <a href="/"><Image alt="Logo du site" src={logo.src} width={140} height={140} /></a>
             </div>
             <div className="w-1/6 h-full hidden justify-start items-center max-md:flex">
-                <a href="/"><img src={smallLogo.src} alt="Logo du site" width={80} /></a>
+                <a href="/"><Image alt="Logo du site" src={smallLogo.src} width={80} height={80} /></a>
             </div>
             <div className="w-2/4 flex justify-center items-center gap-4 h-full max-md:w-4/6">
                 <div className={`w-1/2 relative max-lg:${showAddress} flex gap-2`}>

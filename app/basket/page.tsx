@@ -2,15 +2,18 @@
 
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
 import { ProductBasket } from "@/containers/products/ProductBasket";
 import { Popup } from "@/components/blocks/Popup";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Basket() {
 
     const router = useRouter();
+
+    const { toast } = useToast();
 
     //Constantes pour le modal Popup
     const [ouvrir, setOuvrir] = useState(false);
@@ -70,14 +73,21 @@ export default function Basket() {
         )
     }
 
+    /**
+     * Permet de soumettre la commande
+     */
     const submitCommand = () => {
         //TODO: Envoyer la commande
         if (adresseClient !== "") {
             router.push(`/commands/${8}`);
             setOuvrir(false);
         } else {
-            alert("Veuillez renseigner une adresse de livraison");
             setOuvrir(false);
+            toast({
+                variant: "destructive",
+                title: "Erreur",
+                description: "Veuillez renseigner votre adresse de livraison",
+            });
         }
     }
 

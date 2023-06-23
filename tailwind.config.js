@@ -17,6 +17,10 @@ module.exports = {
       colors: {
         'primary': '#E8B10D',
         'background': '#F2F2F2',
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
       },
       keyframes: {
         "accordion-down": {
