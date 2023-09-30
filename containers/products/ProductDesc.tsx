@@ -20,6 +20,9 @@ export type ProductDescProps = {
 }
 
 export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCart}) => {
+    /**
+     * Notifications
+     */
     const { toast } = useToast();
 
     //Ref

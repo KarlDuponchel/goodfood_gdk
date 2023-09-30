@@ -3,15 +3,22 @@
 import { BaseInputConnect } from "@/components/input/InputConnect";
 import logo from "../../images/logoGF.png";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
+import { login } from "@/services/User";
+import { useToast } from "@/components/ui/use-toast";
 
 export type ConnectFormProps = {}
 
 export const ConnectForm: FunctionComponent<ConnectFormProps> = () => {
+    const { toast } = useToast();
 
     const router = useRouter();
+
+    const refEmail = useRef<HTMLInputElement>(null);
+    const refPswd = useRef<HTMLInputElement>(null);
+
     const [typeInput, setTypeInput] = useState<string>("password");
 
     const handleClick = () => {
@@ -27,10 +34,19 @@ export const ConnectForm: FunctionComponent<ConnectFormProps> = () => {
     }
 
     const submitConnect = () => {
-        let ok = true;
-        if (ok) {
+        if (!refEmail.current || !refPswd.current) return;
+        const email = refEmail.current.value;
+        const password = refPswd.current.value;
+
+        login(email, password).then(() => {
             router.push("/");
-        }
+        }).catch(() => {
+            toast({
+                variant: "destructive",
+                title: "Erreur",
+                description: "Vos informations de connexion sont erronéés"
+            });
+        })
     } 
 
     return (
@@ -41,10 +57,10 @@ export const ConnectForm: FunctionComponent<ConnectFormProps> = () => {
             <span className="bg-primary w-full h-0.5"/>
             <div className="flex flex-col justify-center gap-4 w-full py-4">
                 <div className="flex justify-center items-center">
-                    <BaseInputConnect label="Adresse mail" type="email" />
+                    <BaseInputConnect ref={refEmail} label="Adresse mail" type="email" />
                 </div>
                 <div className="flex justify-center items-center relative">
-                    <BaseInputConnect label="Mot de passe" type={typeInput} />
+                    <BaseInputConnect ref={refPswd} label="Mot de passe" type={typeInput} />
                     {typeInput == "password" ? (
                         <EyeIcon onClick={handleClick} className="absolute w-6 right-6 bottom-2 cursor-pointer" />) : (
                         <EyeSlashIcon onClick={handleClick} className="absolute w-6 right-6 bottom-2 cursor-pointer" />

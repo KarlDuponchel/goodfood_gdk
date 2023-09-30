@@ -28,7 +28,7 @@ export default function AboutUs() {
                                 Nous croyons en la satisfaction de nos clients et nous nous engageons à offrir un service de livraison pratique et fiable. 
                                 Notre objectif est de rendre votre expérience de commande de plats aussi simple et agréable que possible. Que vous recherchiez une cuisine traditionnelle, des plats exotiques ou des options végétariennes, notre menu diversifié saura satisfaire tous les palais.<br/><br/>
                                 Nous accordons une grande importance à la qualité de nos produits et à la satisfaction de nos clients. Nous apprécions vos commentaires et suggestions, car ils nous aident à améliorer constamment nos services.
-                                N'hésitez pas à parcourir notre site web pour découvrir notre menu alléchant, passer vos commandes et nous contacter en cas de besoin. Nous sommes impatients de vous servir et de faire de votre repas une expérience délicieuse et sans tracas.
+                                N&apos;hésitez pas à parcourir notre site web pour découvrir notre menu alléchant, passer vos commandes et nous contacter en cas de besoin. Nous sommes impatients de vous servir et de faire de votre repas une expérience délicieuse et sans tracas.
                             </p>
                         </div>
                     </div>

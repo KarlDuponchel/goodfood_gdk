@@ -19,6 +19,7 @@ export const BaseInputConnect = forwardRef<HTMLInputElement, InputConnectProps>(
         <div className="flex flex-col w-11/12">
             <label className="text-sm text-black">{label}</label>
             <input
+                ref={ref}
                 className="block border-b bg-inherit border-gray-400 text-black p-1 w-full text-sm disabled:opacity-50 h-8 focus:outline-none"
                 {...props}
             />

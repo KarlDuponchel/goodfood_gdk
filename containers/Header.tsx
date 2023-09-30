@@ -9,6 +9,7 @@ import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { disconnect, getUser } from "@/services/User";
 
 export type HeaderProps = {
     toogle?: boolean;
@@ -16,8 +17,12 @@ export type HeaderProps = {
 
 export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
+    const [userBool, setUserBool] = useState(false);
+
     //Verif user connexion
-    const getUser = true;
+    useEffect(() => {
+        setUserBool(getUser());
+    }, [toogle])
 
     //Router next.js
     const router = useRouter();
@@ -99,10 +104,13 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
         }
     }
 
-    const disconnect = () => {
-        localStorage.removeItem("token");
-        router.push("/connect");
+    const logout = () => {
+        disconnect().then(() => {
+            router.push("/connect");
+        })
     }
+
+    console.log(userBool)
 
     return (
         <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
@@ -146,9 +154,9 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                 </div>
             </div>
             <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
-                {!getUser ? (
+                {!userBool ? (
                     <>
-                        <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="transparent"/>
+                        <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="zinc"/>
                         <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>
                     </>
                 ) : !toogleAccount ? (
@@ -171,7 +179,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         <a className="cursor-pointer hover:underline" href="/account">
                             Mon compte
                         </a>
-                        <button className="hover:underline" onClick={disconnect}>
+                        <button className="hover:underline" onClick={logout}>
                             Déconnexion
                         </button>
                         <span>
@@ -198,7 +206,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                     </a>
                     <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
                         <ArrowRightOnRectangleIcon className="w-5" />
-                        <span onClick={disconnect}>Déconnexion</span>
+                        <span onClick={logout}>Déconnexion</span>
                     </div>
                 </div>
             ): ""}

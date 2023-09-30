@@ -2,34 +2,41 @@
 
 import { BaseButton } from "@/components/button/Button";
 import { BaseInputConnect } from "@/components/input/InputConnect";
+import { useToast } from "@/components/ui/use-toast";
+import { createUser } from "@/services/User";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useRef } from "react";
 
 export default function RegisterForm () {
     const router = useRouter();
+    const { toast } = useToast();
 
-    const [showPassword, setShowPassword] = useState<string>("password");
-    const [showConfirmPassword, setShowConfirmPassword] = useState<string>("password");
+    const refName = useRef<HTMLInputElement>(null);
+    const refFirstname = useRef<HTMLInputElement>(null);
+    const refEmail = useRef<HTMLInputElement>(null);
 
-    const handleClickPassword = (type: string) => {
-        if (type == "password") {
-            setShowPassword("text");
-        } else {
-            setShowPassword("password");
-        }
-    }
-
-    const handleClickConfirmPassword = (type: string) => {
-        if (type == "password") {
-            setShowConfirmPassword("text");
-        } else {
-            setShowConfirmPassword("password");
-        }
-    }
-    
     const submitRegister = () => {
-        console.log("submit register");
+        if (!refName.current || !refFirstname.current || !refEmail.current) return;
+        const email = refEmail.current.value;
+        const firstname = refFirstname.current.value;
+        const name = refName.current.value;
+
+        /*createUser(email, firstname, name).then(async () => {
+            const body = {
+                firstname: firstname,
+                lastname: name,
+                email: email
+            }
+            await fetch("/emails/api", {
+                method: "POST",
+                body: JSON.stringify(body)
+            })
+
+            toast({
+                title: "Mail envoyé",
+                description: "Un mail de confirmation a bien été envoyé."
+            })
+        });*/
     }
 
     const redirectToConnect = () => {
@@ -43,23 +50,9 @@ export default function RegisterForm () {
             </div>
             <span className="bg-primary w-full h-0.5"/>
             <div className="grid grid-cols-2 w-full place-items-center pt-3 gap-4">
-                <BaseInputConnect label="Nom*" />
-                <BaseInputConnect label="Prenom*" />
-                <BaseInputConnect label="Email*" />
-                <div className="w-full grid place-items-center relative">
-                    <BaseInputConnect label="Mot de passe*" type={showPassword} />
-                    {showPassword == "password" ? (
-                        <EyeIcon onClick={() => handleClickPassword(showPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />) : (
-                        <EyeSlashIcon onClick={() => handleClickPassword(showPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />
-                    )}
-                </div>
-                <div className="w-full grid place-items-center relative">
-                    <BaseInputConnect className="" label="Confirmation de mot de passe*" type={showConfirmPassword} />
-                    {showConfirmPassword == "password" ? (
-                        <EyeIcon onClick={() => handleClickConfirmPassword(showConfirmPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />) : (
-                        <EyeSlashIcon onClick={() => handleClickConfirmPassword(showConfirmPassword)} className="absolute w-6 right-6 bottom-2 cursor-pointer" />
-                    )}
-                </div>
+                <BaseInputConnect ref={refName} label="Nom*" />
+                <BaseInputConnect ref={refFirstname} label="Prenom*" />
+                <BaseInputConnect ref={refEmail} label="Email*" />
             </div>
             <div className="flex justify-center items-center w-full gap-4 mt-7">
                 <BaseButton label="Continuer" className="w-1/3" variant="primary" onClick={submitRegister}/>
