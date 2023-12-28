@@ -21,22 +21,18 @@ export default function RegisterForm () {
         const firstname = refFirstname.current.value;
         const name = refName.current.value;
 
-        /*createUser(email, firstname, name).then(async () => {
-            const body = {
-                firstname: firstname,
-                lastname: name,
-                email: email
-            }
-            await fetch("/emails/api", {
-                method: "POST",
-                body: JSON.stringify(body)
-            })
-
+        createUser(email, firstname, name).then(async () => {
             toast({
                 title: "Mail envoyé",
                 description: "Un mail de confirmation a bien été envoyé."
             })
-        });*/
+        }).catch(() => {
+            toast({
+                title: "Erreur",
+                variant: "destructive",
+                description: "Erreur à la création de compte"
+            })
+        });
     }
 
     const redirectToConnect = () => {

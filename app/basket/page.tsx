@@ -91,6 +91,8 @@ export default function Basket() {
         }
     }
 
+    console.log(cardProducts)
+
     return (
         <>
             <Header toogle={updateShoppingCart} />
@@ -105,9 +107,9 @@ export default function Basket() {
                 ) : (
                 <div className="w-full flex justify-center items-center">
                     <div className="w-4/6 max-md:w-5/6 max-sm:w-11/12 h-3/4 flex flex-col">
-                        {cardProducts.map((product, key) => {
+                        {cardProducts.map((product) => {
                             return (
-                                <ProductBasket key={key} id={product.id} name={product.name} image={product.image} nbProduct={product.nbProduct} price={product.price} onUpdateCart={toogleFromChild} />
+                                <ProductBasket key={product.id} product={product} onUpdateCart={toogleFromChild} />
                             )
                         })}
                         <div className="flex justify-end gap-3 mt-10">

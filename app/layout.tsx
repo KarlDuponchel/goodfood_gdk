@@ -1,6 +1,8 @@
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css'
 import { Kanit } from 'next/font/google'
+import clsx from 'clsx';
+import { Providers } from './providers';
 
 const inter = Kanit({
     subsets: ["latin"],
@@ -26,11 +28,8 @@ export default function RootLayout({
 
   return (
   <html lang="fr">
-    <head>
-      <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' />
-    </head>
-    <body className={inter.className}>
-      {children}
+    <body className={clsx("text-black", inter.className)}>
+      <Providers>{children}</Providers>
       <Toaster />
     </body>
   </html>

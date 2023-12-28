@@ -4,9 +4,9 @@ import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 import { ProductDesc } from "@/containers/products/ProductDesc";
 import { ArrowSmallLeftIcon } from "@heroicons/react/24/outline";
-import { ProductCard } from "@/containers/products/ProductCard";
-import { useEffect, useState } from "react";
-import { getProducts } from "@/services/Product";
+import { useState } from "react";
+import { useFetchAllProducts } from "@/hooks/catalog/use_fetch_all_products";
+import { ProductsCards } from "@/containers/products/ProductsCards";
 
 export default function Page({
     params,
@@ -14,12 +14,9 @@ export default function Page({
     params: { slug: number };
   }) {
 
+    const products = useFetchAllProducts(1, 4);
+
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
-    const [products, setProducts] = useState<any[]>([]);
-  
-    useEffect(() => {
-        getProducts(4).then((result) => setProducts(result.data));
-    }, [])
 
     const toogleFromChild = (n: any) => {
       if (!updateShoppingCart) {
@@ -49,11 +46,7 @@ export default function Page({
                 </div>
                 <div className="w-full flex justify-center items-center">
                     <div className="grid grid-cols-4 max-2xl:grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1 gap-4 w-3/4 place-items-center">
-                      {products.map((product, key) => {
-                        return (
-                          <ProductCard key={key} id={product.ID} name={product.name} image={product.image} price={product.price} onUpdateCart={toogleFromChild} />
-                        )
-                      })}
+                      <ProductsCards page={1} limit={4} showMore={false} />
                     </div> 
                 </div>
             </div>

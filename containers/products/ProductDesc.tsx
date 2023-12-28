@@ -1,11 +1,14 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
-import { getIngredientById, getIngredientsByProduct, getProductById } from "@/services/Product";
+import { getIngredientById } from "@/services/Product";
 import logo404 from '../../images/404.webp';
 import { useToast } from "@/components/ui/use-toast";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
+import { useFetchIngredientsIdsByProductID } from "@/hooks/catalog/use_fetch_ingredients_by_product";
+import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
 
 export type ProductDescProps = {
     /**
@@ -28,9 +31,12 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     //Ref
     const refNbProduct = useRef<HTMLSelectElement>(null);
 
+    //Appels API
+    const product = useFetchProductByID(id)
+    const ingredientsIds = useFetchIngredientsIdsByProductID(id).data;
+    const restaurant = useFetchRestaurantById(product.data?.id_restaurant ?? -1)
+
     //Constantes
-    const [product, setProduct] = useState<any>();
-    const [ingredientsIds, setIngredientsIds] = useState<any[]>([]);
     const [ingredients, setIngredients] = useState<any[]>([]);
     const [imageProduct, setImageProduct] = useState<string>("");
 
@@ -42,34 +48,27 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     const [showComposition, setShowComposition] = useState<boolean>(false);
     const [showDescription, setShowDescription] = useState<boolean>(false);
 
-    /**
-     * Récupère les informations du produit et les ingrédients
-     */
-    useEffect(() => {
-        setIngredients([]);
-        getProductById(id).then((product) => { setProduct(product) });
-        getIngredientsByProduct(id).then((ingredients) => { setIngredientsIds(ingredients.data) });
-    }, [id])
 
     /**
      * Récupère les informations des ingrédients
      */
     useEffect(() => {
-        if (!ingredientsIds || ingredientsIds.length == 0) return;
-        console.log(ingredientsIds);
+        if (!ingredientsIds) return;
+
         let ingredientsToPush: any[] = [];
-        for (let i = 0; i < ingredientsIds.length; i++) {
-            getIngredientById(ingredientsIds[i].id_ingredient).then((ingredient) => {
+        for (let i = 0; i < ingredientsIds.data.length; i++) {
+            const idIngredient = ingredientsIds.data[i].id_ingredient;
+            getIngredientById(idIngredient).then((ingredient) => {
                 ingredientsToPush.push(ingredient);
+                console.log(ingredient)
             });
         }
-        console.log(ingredientsToPush)
         setIngredients(ingredientsToPush);
     }, [ingredientsIds])
 
     useEffect(() => {
         if (!product) return;
-        if (product.image == "") {
+        if (product.data?.image == "") {
             setImageProduct(logo404.src);
         } else {
             setImageProduct(logo404.src);
@@ -116,13 +115,12 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         if (!refNbProduct.current || !product) return;
         onUpdateCart(true);
         let nbProduct = refNbProduct.current.value;
-        console.log(product.price);
         let productToAdd = {
             //Mettre à jour avec les champs du plat
             id: id,
-            name: product.name,
+            name: product.data?.name,
             nbProduct: nbProduct,
-            price: product.price,
+            price: product.data?.price,
             image: imageProduct
         }
 
@@ -149,7 +147,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         })
     }
 
-    if (!product || !ingredientsIds || !ingredients) return (<div>Chargement...</div>)
+    if (!product.data || !ingredientsIds?.data || !ingredients || !restaurant.data) return (<div>Chargement...</div>)
 
     return (
         <div className="w-3/4 h-96 max-lg:h-fit bg-zinc-200 rounded-md flex max-lg:flex-col shadow-lg">
@@ -158,12 +156,12 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
             </div>
             <div className="w-2/4 h-full flex flex-col pt-5 pl-10 max-lg:w-full max-lg:pr-10">
                 <div className="w-full flex justify-between font-black text-lg">
-                    <span>{product.name}</span>
-                    <span>{product.price}€</span>
+                    <span>{product.data?.name}</span>
+                    <span>{product.data?.price}€</span>
                 </div>
                 <div className="w-full text-sm">
-                    <span className="bg-red-500">{/*Nom et adresse du restaurant*/}
-                        BurgCity - 6 rue de la République, 76000 Rouen
+                    <span>
+                        {`${restaurant.data?.name} - ${restaurant.data?.address}, ${restaurant.data?.zip_code} ${restaurant.data?.city}`}
                     </span>
                 </div>
                 <div className="flex justify-between pt-8 cursor-pointer hover:underline" onClick={handleShowComposition}>
@@ -187,7 +185,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                 </div>
                 {showDescription && (
                     <div className={`w-4/6 pl-4 transition-all duration-300 ease-in-out`}>    
-                        <span>{product.description}</span>
+                        <span>{product.data?.description}</span>
                     </div>
                 )}
             </div>

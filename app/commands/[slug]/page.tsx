@@ -237,6 +237,7 @@ export default function Page({
     return (
         <>
             <Header />
+              <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" />
               <div className="p-6 flex flex-col gap-8 min-h-screen">
                 <div className='flex justify-between font-bold text-lg'>
                     <span>Suivi de votre <span className='text-primary'>commande n°{params.slug}</span></span>

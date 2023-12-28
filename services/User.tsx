@@ -1,3 +1,5 @@
+import { getCookie } from "cookies-next";
+
 export function getHeaders(): Headers {
     const headers = new Headers();
     headers.set("Content-type", "application/json");
@@ -5,17 +7,7 @@ export function getHeaders(): Headers {
     return headers;
 }
 
-export function getUser() {
-    let boolToReturn = false;
-
-    if (localStorage.getItem('accessToken') && localStorage.getItem('accessToken') !== "") {
-        boolToReturn = true;
-    }
-
-    return boolToReturn;
-}
-
-export async function login(email: string, password: string): Promise<any> {
+export async function loginUser(email: string, password: string): Promise<any> {
     const input = `${process.env.api}/auth/security/login`;
     const response = await fetch(input, {
         method: "POST",
@@ -23,7 +15,7 @@ export async function login(email: string, password: string): Promise<any> {
             email: email,
             password: password
         }),
-        headers: getHeaders()
+        headers: getHeaders(),
     });
 
     if (response.status !== 200) {
@@ -31,26 +23,45 @@ export async function login(email: string, password: string): Promise<any> {
         throw new Error(error.message);
     }
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    
-    response.json().then((value) => {
-        localStorage.setItem("accessToken", value.accessToken);
-        localStorage.setItem("refreshToken", value.refreshToken);
-    });
+    return response.json();
 }
 
-export async function disconnect(): Promise<any> {
-    /*const input = `${process.env.api}/auth/security/logout`;
-    const response = await fetch(input, { method: "DELETE", headers: getHeaders() });
+export async function getMe(): Promise<any> {
+    const headersBearer = new Headers();
+    headersBearer.set("Content-type", "application/json",);
+
+    const input = `${process.env.api}/auth/security/me`;
+    const response = await fetch(input, { 
+        headers: {
+            Authorization: `Bearer ${getCookie("accessToken")}`,
+            accept: "application/json",
+            "content-type": "application/json",
+        }, 
+    });
 
     if (response.status !== 200) {
         const error = await response.json();
         throw new Error(error.message);
-    }*/
+    }
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    const json = await response.json();
+    return json;
+} 
+
+export async function disconnect(): Promise<any> {
+    const input = `${process.env.api}/auth/security/logout`;
+    const response = await fetch(input, { 
+    method: "DELETE", 
+    headers: {
+        Authorization: `Bearer ${getCookie("accessToken")}`,
+        accept: "application/json",
+        "content-type": "application/json",
+    }, });
+
+    if (response.status !== 200) {
+        const error = await response.json();
+        throw new Error(error.message);
+    }
 }
 
 export async function createUser(email: string, firstname: string, lastname: string): Promise<any> {
@@ -66,6 +77,23 @@ export async function createUser(email: string, firstname: string, lastname: str
     });
     
     if (response.status !== 201) {
+        const error = await response.json();
+        throw new Error(error.message);
+    }
+}
+
+export async function verifyEmail(token: string, password: string, confirmPassword: string): Promise<any> {
+    const input = `${process.env.api}/auth/security/verify?verificationToken=${token}`;
+    const response = await fetch(input, {
+        method: "POST",
+        body: JSON.stringify({
+            password: password,
+            password_confirm: confirmPassword
+        }),
+        headers: getHeaders()
+    });
+    
+    if (response.status !== 200) {
         const error = await response.json();
         throw new Error(error.message);
     }

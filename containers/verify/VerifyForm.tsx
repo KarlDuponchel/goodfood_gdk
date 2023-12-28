@@ -1,15 +1,27 @@
 'use client';
 
 import { BaseInputConnect } from "@/components/input/InputConnect";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon, InformationCircleIcon } from "@heroicons/react/24/outline";
 import { FunctionComponent, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { verifyEmail } from "@/services/User";
+import { useToast } from "@/components/ui/use-toast";
 
 export type VerifyFormProps = {}
 
 export const VerifyForm: FunctionComponent<VerifyFormProps> = () => {
+
+    //REGEX : Une majuscule, une minuscule, 1 chiffre, et 1 caractère spécial, entre 8 et 32 chars
+
+    //Initialisation des constantes
+    const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    /*Récupération du token*/
+    const token = searchParams.get("accessToken");
+
     const [typeInput, setTypeInput] = useState<string>("password");
     const [typeInputConfirm, setTypeInputConfirm] = useState<string>("password");
 
@@ -48,10 +60,35 @@ export const VerifyForm: FunctionComponent<VerifyFormProps> = () => {
     }
 
     const confirmRegister = () => {
+        if (!refPassword.current || !refPasswordConfirm.current || token == null) return;
+
         if (!disabled) {
-            router.push("/");
+            verifyEmail(token, refPassword.current.value, refPasswordConfirm.current.value).then(() => {
+                toast({
+                    variant: "default",
+                    title: "Création réussie !",
+                    description: "La création de compte est terminée, vous serez redirigé(e) vers la page de connexion"
+                })
+                setTimeout(() => {
+                    router.push("/connect");
+                }, 3500)
+            }).catch(() => {
+                toast({
+                    title: "Erreur",
+                    variant: "destructive",
+                    description: "Une erreur est survenue à la confirmation du mot de passe"
+                })
+            });
         }
     }
+    /*
+    if (!token || token == null) {
+        return (
+            <div className="text-white">
+                Veuillez passer la page de connexion
+            </div>
+        )
+    }*/
 
     return (
         <div className="bg-slate-50 w-1/5 h-fit rounded-lg p-4 flex flex-col items-center max-xl:w-1/4 max-lg:w-1/3 max-md:w-1/2 max-sm:w-2/3">
@@ -75,10 +112,18 @@ export const VerifyForm: FunctionComponent<VerifyFormProps> = () => {
                     )}
                 </div>
                 {tooglePswd ? (
-                    <span className="absolute -bottom-5 left-4 text-red-500 font-thin animate-pulse">Les mots de passe ne correspondent pas</span>
+                    <span className="text-red-500 text-sm font-thin animate-pulse -mt-4">Les mots de passe ne correspondent pas</span>
                 ) : ""}
             </div>
-            <div className="w-3/4 flex gap-4 pt-10">
+            <div className="flex flex-col items-start w-full text-sm">
+                <span>Le mot de passe doit contenir au moins :</span>
+                <ul className="list-disc list-inside pl-4">
+                    <li>8 caractères</li>
+                    <li>1 majuscule et 1 minuscule</li>
+                    <li>1 chiffre</li>
+                </ul>
+            </div>
+            <div className="w-3/4 flex gap-4 pt-4">
                 <BaseButton variant="primary" label="Poursuivre" type="button" disabled={disabled} onClick={confirmRegister} className={`w-full ${disabled ? "cursor-not-allowed" : ""}`} />
             </div>
         </div>

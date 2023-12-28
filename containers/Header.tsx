@@ -9,7 +9,12 @@ import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { disconnect, getUser } from "@/services/User";
+import { useAuth } from "@/hooks/useAuth";
+import { disconnect } from "@/services/User";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { useQuery } from "react-query";
+import { getAllRestaurants, getRestaurantsByName } from "@/services/Restaurants";
+import { Restaurant } from "@/utils/types";
 
 export type HeaderProps = {
     toogle?: boolean;
@@ -17,12 +22,8 @@ export type HeaderProps = {
 
 export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
-    const [userBool, setUserBool] = useState(false);
-
-    //Verif user connexion
-    useEffect(() => {
-        setUserBool(getUser());
-    }, [toogle])
+    const { status } = useAuth();
+    const { toast } = useToast();
 
     //Router next.js
     const router = useRouter();
@@ -40,6 +41,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [showSearch, setShowSearch] = useState<string>("w-full");
     const [showAddress, setShowAddress] = useState<string>("hidden");
+    const [restaurantsSearched, setRestaurantsSearched] = useState<Restaurant[]>([]);
 
     useEffect(() => {
         if (localStorage.getItem("product")) {
@@ -104,13 +106,29 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
         }
     }
 
+    const handleSearchRestaurants = () => {
+        if (!refRestaurant.current) return;
+        const keySearch = refRestaurant.current.value;
+
+        if (keySearch.length > 2) {
+            getRestaurantsByName(keySearch).then((restaurants) => {
+                setRestaurantsSearched(restaurants);
+            })
+        } else {
+            setRestaurantsSearched([]);
+        }
+    }
+
     const logout = () => {
         disconnect().then(() => {
+            toast({
+                variant: "default",
+                title: "Déconnexion",
+                description: "Déconnexion réussie, vous allez être redirigé"
+            })
             router.push("/connect");
         })
     }
-
-    console.log(userBool)
 
     return (
         <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
@@ -142,19 +160,29 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         </div>
                         ) : ""}
                 </div>
-                <div className={`w-1/2 max-lg:${showSearch} flex gap-2`}>
+                <div className={`w-1/2 relative max-lg:${showSearch} flex gap-2`}>
                     <div className="flex w-full">
-                        <BaseInput ref={refRestaurant} className="w-96" placeholder="Rechercher parmis nos restaurants"/>
+                        <BaseInput ref={refRestaurant} className="w-96" onChange={handleSearchRestaurants} placeholder="Rechercher parmis nos restaurants"/>
                         <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
                             <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeRestaurants} />
                         </span>
                     </div>
                     <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
-                    {/*<InputDatalist placeholder="Rechercher parmis nos restaurants" options={potentialAddresses} />*/}
+                    {restaurantsSearched && restaurantsSearched.length > 0 ? (
+                        <div className="absolute bg-zinc-200 top-10 w-11/12 ml-4 p-1 rounded-b-lg">
+                        {restaurantsSearched.map((restaurant, key) => {
+                            return (
+                                <div className={`flex flex-col transition duration-100 justify-between hover:bg-zinc-300 ${key !== restaurantsSearched.length - 1 ? `border-b border-zinc-300` : ""} cursor-pointer text-sm`} key={key}>
+                                    <span>{restaurant.name}</span>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    ) : ""}
                 </div>
             </div>
             <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
-                {!userBool ? (
+                {status !== 1 ? (
                     <>
                         <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="zinc"/>
                         <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>

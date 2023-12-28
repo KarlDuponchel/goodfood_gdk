@@ -3,32 +3,15 @@
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import { CardProduct, Product } from "@/utils/types";
+import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
 
 export type ProductBasketProps = {
     /**
-     * Identifiant du produit
+     * Le produit
      */
-    id: number;
-
-    /**
-     * Nom du produit;
-     */
-    name: string;
-
-    /**
-     * Prix du produit
-     */
-    price: number;
-
-    /**
-     * Nombre de produits
-     */
-    nbProduct: number;
-
-    /**
-     * Image du produit
-     */
-    image: string;
+    product: CardProduct;
 
     /**
      * Permet d'envoyer au container parent un booleen pour actualiser les données
@@ -39,13 +22,14 @@ export type ProductBasketProps = {
 }
 
 export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
-    id, name, price, nbProduct, image, onUpdateCart,
+    product, onUpdateCart,
 }) => {
 
     //Ref
     const refBaseNbSelect = useRef<HTMLSelectElement>(null);
 
     const [adresseClient, setAdresseClient] = useState<string>("");
+    const restaurant = useFetchRestaurantById(product.id_restaurant)
 
     useEffect(() => {
         if (localStorage.getItem("address")) {
@@ -93,12 +77,12 @@ export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
             <div className="flex justify-between">
                 <div className="flex gap-3">
                     <div className="mb-2">
-                        <a href={`/products/${id}`} >
-                            <img src={image} className="w-16 h-16 bg-no-repeat rounded-full" />
+                        <a href={`/products/${product.id}`} >
+                            <Image alt="Image produit" src={product.image} className="w-16 h-16 bg-center rounded-full" width={45} height={45}  />
                         </a>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-lg font-extrabold">Nom Restaurant - {name} ({price}€)</span>
+                        <span className="text-lg font-extrabold">{restaurant.data?.name} - {product.name} ({product.price}€)</span>
                         {adresseClient ? (
                             <span>Livraison au {adresseClient}</span>
                         ) : (
@@ -108,10 +92,10 @@ export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
                 </div>
                 <div className="relative flex flex-col items-end gap-3">
                     <div className="flex gap-1">
-                        <BaseNbSelect ref={refBaseNbSelect} onChange={() => updateNbProducts(id)} defaultValue={nbProduct}/>
-                        <TrashIcon className="absolute cursor-pointer w-6 text-red-500 -right-7 top-10" onClick={() => deleteFromCart(id)} />
+                        <BaseNbSelect ref={refBaseNbSelect} onChange={() => updateNbProducts(product.id)} defaultValue={product.nbProduct}/>
+                        <TrashIcon className="absolute cursor-pointer w-6 text-red-500 -right-7 top-10" onClick={() => deleteFromCart(product.id)} />
                     </div>
-                    <span className="font-black text-lg">{(nbProduct * price).toFixed(2)}€</span>
+                    <span className="font-black text-lg">{(Number(product.nbProduct) * product.price).toFixed(2)}€</span>
                 </div>
             </div>
         </div>
