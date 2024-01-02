@@ -17,8 +17,6 @@ export async function apiFetch<T>(
       },
     });
   
-    console.log("response", response);
-  
     if (response.ok) {
       return response.json() as Promise<T>;
     }

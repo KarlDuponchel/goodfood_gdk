@@ -37,3 +37,24 @@ export type Restaurant = {
     zip_code: string,
     country: string
 }
+
+export type Order = {
+    id: number,
+    idUser: number,
+    idRestaurant: number,
+    country: string,
+    city: string,
+    address: string,
+    additionnalAddress: string,
+    zipCode: string,
+    commandType: string,
+    createdAt: Date,
+    updatedAt: Date,
+    orderContents: {
+        id: number,
+        idOrder: number,
+        idContent: number,
+        quantity: number,
+        price: number
+    }[]
+}

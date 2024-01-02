@@ -46,7 +46,7 @@ export default function Page({
                 </div>
                 <div className="w-full flex justify-center items-center">
                     <div className="grid grid-cols-4 max-2xl:grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1 gap-4 w-3/4 place-items-center">
-                      <ProductsCards page={1} limit={4} showMore={false} />
+                      <ProductsCards page={1} limit={4} showMore={false} onUpdateCart={toogleFromChild} />
                     </div> 
                 </div>
             </div>

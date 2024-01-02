@@ -9,6 +9,8 @@ import Image from "next/image";
 import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
 import { useFetchIngredientsIdsByProductID } from "@/hooks/catalog/use_fetch_ingredients_by_product";
 import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export type ProductDescProps = {
     /**
@@ -19,7 +21,7 @@ export type ProductDescProps = {
     /**
      * Fonction de mise à jour du panier
      */
-    onUpdateCart: (n: any) => void;
+    onUpdateCart: (n: boolean) => void;
 }
 
 export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCart}) => {
@@ -27,6 +29,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
      * Notifications
      */
     const { toast } = useToast();
+    const router = useRouter();
 
     //Ref
     const refNbProduct = useRef<HTMLSelectElement>(null);
@@ -143,7 +146,8 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         }
         toast({
             title: "Produit ajouté au panier",
-            description: `${productToAdd.nbProduct} ${productToAdd.name} ${Number(productToAdd.nbProduct) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`
+            description: `${productToAdd.nbProduct} ${productToAdd.name} ${Number(productToAdd.nbProduct) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`,
+            action: <ToastAction altText="Panier" className="border border-primary p-1 rounded hover:bg-zinc-200 transition" onClick={() => router.push("/basket")}>Panier</ToastAction>
         })
     }
 

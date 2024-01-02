@@ -1,19 +1,18 @@
 'use client';
 
-import { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import logo from "../images/logoBlackPng.png";
 import smallLogo from "../images/logoGF.png";
 import { BaseInput } from "@/components/input/Input";
-import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon, Bars3Icon, ArrowRightOnRectangleIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { InboxIcon, ShoppingCartIcon, UserCircleIcon, XMarkIcon, Bars3Icon, ArrowRightOnRectangleIcon, ArrowPathIcon, UserPlusIcon, UserIcon } from "@heroicons/react/24/outline";
 import { autocompleteAddresses } from "@/services/Geolocate";
 import { BaseButton } from "@/components/button/Button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { disconnect } from "@/services/User";
-import { toast, useToast } from "@/components/ui/use-toast";
-import { useQuery } from "react-query";
-import { getAllRestaurants, getRestaurantsByName } from "@/services/Restaurants";
+import { useToast } from "@/components/ui/use-toast";
+import { getRestaurantsByName } from "@/services/Restaurants";
 import { Restaurant } from "@/utils/types";
 
 export type HeaderProps = {
@@ -219,24 +218,41 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
             <div className="max-lg:flex max-lg:w-1/12 justify-end items-center hidden w-1/4 relative">
                 <Bars3Icon className="cursor-pointer w-7" onClick={() => setShowMenu(!showMenu)} />
                 {showMenu ? (
-                <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
-                    <a href="/basket" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                        <ShoppingCartIcon className="w-5" />
-                        <span>Panier</span>
-                    </a>
-                    <a href="/commands" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                        <InboxIcon className="w-5" />
-                        <span>Mes commandes</span>
-                    </a>
-                    <a href="/account" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                        <UserCircleIcon className="w-5" />
-                        <span>Mon compte</span>
-                    </a>
-                    <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
-                        <ArrowRightOnRectangleIcon className="w-5" />
-                        <span onClick={logout}>Déconnexion</span>
-                    </div>
-                </div>
+                    status !== 1 ? (
+                        <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
+                            <a href="/connect" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <UserIcon className="w-5" />
+                                <span>Connexion</span>
+                            </a>
+                            <a href="/register" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <UserPlusIcon className="w-5" />
+                                <span>Inscription</span>
+                            </a>
+                            <a href="/basket" className="cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <ShoppingCartIcon className="w-5" />
+                                <span>Panier</span>
+                            </a>
+                        </div>
+                    ) : (
+                        <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
+                            <a href="/basket" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <ShoppingCartIcon className="w-5" />
+                                <span>Panier</span>
+                            </a>
+                            <a href="/commands" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <InboxIcon className="w-5" />
+                                <span>Mes commandes</span>
+                            </a>
+                            <a href="/account" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <UserCircleIcon className="w-5" />
+                                <span>Mon compte</span>
+                            </a>
+                            <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
+                                <ArrowRightOnRectangleIcon className="w-5" />
+                                <span onClick={logout}>Déconnexion</span>
+                            </div>
+                        </div>
+                    )
             ): ""}
             </div>
         </div>
