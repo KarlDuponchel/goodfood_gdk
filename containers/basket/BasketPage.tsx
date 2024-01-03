@@ -14,10 +14,12 @@ import { createOrder } from "@/services/Order";
 
 export const BasketPage = () => {
 
+    //Ajouter la demande d'email si non connecté avec status
+
     const router = useRouter();
 
     const { toast } = useToast();
-    const { user } = useAuth();
+    const { user, status } = useAuth();
 
     //Constantes pour le modal Popup
     const [ouvrir, setOuvrir] = useState(false);
@@ -33,7 +35,7 @@ export const BasketPage = () => {
 
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
 
-    const [cardProducts, setCardProducts] = useState<any[]>([]);
+    const [cardProducts, setCardProducts] = useState<CardProduct[]>([]);
     const [adresseClient, setAdresseClient] = useState<string>("");
     const [loading, setLoading] = useState<string>("pulse");
 
@@ -66,7 +68,7 @@ export const BasketPage = () => {
     const getTotalPrice = () => {
         let total = 0;
         for (let i = 0; i < cardProducts.length; i++) {
-            total += cardProducts[i].nbProduct * cardProducts[i].price;
+            total += Number(cardProducts[i].nbProduct) * cardProducts[i].price;
         }
         return total.toFixed(2);
     }
@@ -90,8 +92,6 @@ export const BasketPage = () => {
 
             const orderContent = cardProducts.map((product: CardProduct) => {
                 return {
-                    id: 10,
-                    idOrder: 10,
                     idContent: product.id,
                     quantity: Number(product.nbProduct),
                     price: product.price
@@ -99,18 +99,22 @@ export const BasketPage = () => {
             })
             
             const orderBody: Order = {
-                id: 10,
-                idUser: user ? user.id : 0,
-                idRestaurant: 1,
+                email: user ? user.email : "test@email.com",
+                idRestaurant: cardProducts[0].id_restaurant,
                 country: adresse[2],
                 city: city,
                 address: adresse[0],
                 additionnalAddress: "",
-                zipCode: zipCode,
-                commandType: "test",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                orderContents: orderContent
+                zipCode: zipCode.trim(),
+                commandType: "done",
+                isValidate: false,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                orderContents: [{
+                    idContent: 1,
+                    quantity: 1,
+                    price: 7
+                }]
             }
 
             createOrder(orderBody).then((body) => {
@@ -118,14 +122,14 @@ export const BasketPage = () => {
                     title: "Commande créée",
                     description: "Votre commande a bien été créée, vous allez être redirigé"
                 })
-                console.log(body)
-                //router.push(`/commands/${body.id}`);
+                localStorage.removeItem("product")
+                router.push(`/commands/${body.id}`);
                 setOuvrir(false);
             }).catch(() => {
                 toast({
                     variant: "destructive",
                     title: "Une erreur est survenue",
-                    description: "Une erreur est survenur à la création de votre commande"
+                    description: `Une erreur est survenue à la création de la commande`
                 })
                 setOuvrir(false)
             })

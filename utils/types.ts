@@ -1,5 +1,5 @@
 export type User = {
-    id: number,
+    _id: number,
     firstname: string,
     lastname: string,
     email: string,
@@ -39,8 +39,7 @@ export type Restaurant = {
 }
 
 export type Order = {
-    id: number,
-    idUser: number,
+    email: string,
     idRestaurant: number,
     country: string,
     city: string,
@@ -48,11 +47,10 @@ export type Order = {
     additionnalAddress: string,
     zipCode: string,
     commandType: string,
-    createdAt: Date,
-    updatedAt: Date,
+    isValidate: boolean,
+    createdAt: string,
+    updatedAt: string,
     orderContents: {
-        id: number,
-        idOrder: number,
         idContent: number,
         quantity: number,
         price: number

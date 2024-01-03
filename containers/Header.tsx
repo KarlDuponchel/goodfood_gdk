@@ -182,10 +182,10 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
             </div>
             <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
                 {status !== 1 ? (
-                    <>
+                    <div className="max-xl:gap-4">
                         <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="zinc"/>
                         <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>
-                    </>
+                    </div>
                 ) : !toogleAccount ? (
                     <>
                         <a href="/commands">
