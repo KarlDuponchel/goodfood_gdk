@@ -83,7 +83,6 @@ export const BasketPage = () => {
      * Permet de soumettre la commande
      */
     const submitCommand = () => {
-        //TODO: Envoyer la commande
         if (adresseClient !== "") {
             const adresse = adresseClient.split(",");
             const indexOfCity = adresse[1].trim().indexOf(" ")
@@ -94,6 +93,7 @@ export const BasketPage = () => {
                 return {
                     idContent: product.id,
                     quantity: Number(product.nbProduct),
+                    contentName: product.name,
                     price: product.price
                 }
             })
@@ -106,15 +106,11 @@ export const BasketPage = () => {
                 address: adresse[0],
                 additionnalAddress: "",
                 zipCode: zipCode.trim(),
-                commandType: "done",
+                commandType: "wait",
                 isValidate: false,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                orderContents: [{
-                    idContent: 1,
-                    quantity: 1,
-                    price: 7
-                }]
+                orderContents: orderContent
             }
 
             createOrder(orderBody).then((body) => {
@@ -143,6 +139,8 @@ export const BasketPage = () => {
         }
     }
 
+
+    console.log(cardProducts)
     return (
         <>
             <Header toogle={updateShoppingCart} />

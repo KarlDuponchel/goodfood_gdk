@@ -1,6 +1,7 @@
 import { Order } from "@/utils/types";
 import { getHeaders } from "./User";
 
+//Inutile
 export async function createOrder(order: Order): Promise<any> {
     const input = `${process.env.api}/order/orders`;
     const response = await fetch(input, {

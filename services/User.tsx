@@ -82,6 +82,26 @@ export async function createUser(email: string, firstname: string, lastname: str
     }
 }
 
+export async function createAccountant(email: string, firstname: string, lastname: string, restaurant: number): Promise<any> {
+    const input = `${process.env.api}/auth/users`;
+    const response = await fetch(input, {
+        method: "POST",
+        body: JSON.stringify({
+            email: email,
+            firstname: firstname,
+            lastname: lastname,
+            _role: "6552349a557ee5fa12fbfcdb",
+            _restaurant: restaurant,
+        }),
+        headers: getHeaders()
+    });
+    
+    if (response.status !== 201) {
+        const error = await response.json();
+        throw new Error(error.message);
+    }
+}
+
 export async function verifyEmail(token: string, password: string, confirmPassword: string): Promise<any> {
     const input = `${process.env.api}/auth/security/verify?verificationToken=${token}`;
     const response = await fetch(input, {

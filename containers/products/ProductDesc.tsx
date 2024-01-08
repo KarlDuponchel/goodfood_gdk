@@ -11,6 +11,10 @@ import { useFetchIngredientsIdsByProductID } from "@/hooks/catalog/use_fetch_ing
 import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { Basket, Product } from "@/utils/types";
+import { createBasket } from "@/services/Basket";
+import { useFetchOrderById } from "@/hooks/order/use_fetch_order_by_id";
 
 export type ProductDescProps = {
     /**
@@ -25,9 +29,8 @@ export type ProductDescProps = {
 }
 
 export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCart}) => {
-    /**
-     * Notifications
-     */
+
+    const { status, user } = useAuth();
     const { toast } = useToast();
     const router = useRouter();
 
@@ -63,7 +66,6 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
             const idIngredient = ingredientsIds.data[i].id_ingredient;
             getIngredientById(idIngredient).then((ingredient) => {
                 ingredientsToPush.push(ingredient);
-                console.log(ingredient)
             });
         }
         setIngredients(ingredientsToPush);
@@ -151,6 +153,25 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         })
     }
 
+    const addToBasket = (product: Product) => {
+        if (!user) return;
+        const productObject = {
+            userId: user._id,
+            products: {
+                idContent: product.ID,
+                contentName: product.name,
+                quantity: Number(refNbProduct.current?.value)
+            }
+        }
+        console.log(productObject)
+        createBasket(productObject).then(() => {
+            toast({
+                title: "Produit ajouté",
+                description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+            })
+        })
+    }
+
     if (!product.data || !ingredientsIds?.data || !ingredients || !restaurant.data) return (<div>Chargement...</div>)
 
     return (
@@ -199,7 +220,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                         <div className="w-full flex justify-end">
                             <BaseNbSelect ref={refNbProduct} className="justify-end" />
                         </div>
-                        <BaseButton className="w-full" label="Commander" onClick={addToCard} variant="primary" />
+                        <BaseButton className="w-full" label="Commander" onClick={() => addToBasket(product.data)} variant="primary" />
                     </div>
                 </div>
             </div>

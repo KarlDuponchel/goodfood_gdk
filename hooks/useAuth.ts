@@ -1,5 +1,5 @@
 import { useToast } from "@/components/ui/use-toast";
-import { getMe, loginUser } from "@/services/User";
+import { disconnect, getMe, loginUser } from "@/services/User";
 import { useUserStore } from "@/store/useUserStore";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ export function useAuth() {
     } 
 
     const authenticate = useCallback(() => {
-        getMe().then((value) => setUser(value.user)).catch(() => setUser(null))
+        getMe().then((value) => {console.log(value.user); setUser(value.user)}).catch(() => setUser(null))
     }, [setUser])
 
     const login = useCallback((email: string, password: string) => {
@@ -38,6 +38,14 @@ export function useAuth() {
         .then((value) => {
             setCookie("accessToken", value.accessToken)
             setCookie("refreshToken", value.refreshToken)
+
+            setTimeout(() => {
+                if (value.user._role.name === "accountant") {
+                    router.push("/test")
+                } else {
+                    router.push("/")
+                }
+            }, 2000)
         })
         .then(authenticate)
         .then(() => {
@@ -45,9 +53,6 @@ export function useAuth() {
                 title: "Connexion réussie",
                 description: "Vous allez être redirigé(e) rapidement"
             })
-            setTimeout(() => {
-                router.push("/");
-            }, 2000)
         }).catch(() => {
             toast({
                 variant: "destructive",
@@ -57,10 +62,26 @@ export function useAuth() {
         });
     }, [authenticate, router, toast])
 
+    const logout = useCallback(() => {
+        disconnect().then(() => {
+            setCookie("accessToken", "", { expires: new Date(0) })
+            setCookie("refreshToken", "", { expires: new Date(0) })
+        })
+        .then(() => {
+            toast({
+                title: "Déconnexion réussie",
+                description: "Vous allez être redirigé(e) vers la page de connexion"
+            })
+        })
+        .then(() => setUser(null))
+        .then(() => { router.push("/connect") })
+    }, [router, setUser, toast])
+
     return {
         user,
         status,
         authenticate,
-        login
+        login,
+        logout
     }
 }

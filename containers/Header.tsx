@@ -21,7 +21,7 @@ export type HeaderProps = {
 
 export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
-    const { status } = useAuth();
+    const { status, logout } = useAuth();
     const { toast } = useToast();
 
     //Router next.js
@@ -118,17 +118,6 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
         }
     }
 
-    const logout = () => {
-        disconnect().then(() => {
-            toast({
-                variant: "default",
-                title: "Déconnexion",
-                description: "Déconnexion réussie, vous allez être redirigé"
-            })
-            router.push("/connect");
-        })
-    }
-
     return (
         <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center max-md:hidden">
@@ -182,7 +171,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
             </div>
             <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
                 {status !== 1 ? (
-                    <div className="max-xl:gap-4">
+                    <div className="flex max-xl:gap-4">
                         <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="zinc"/>
                         <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>
                     </div>

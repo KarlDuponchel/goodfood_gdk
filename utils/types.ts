@@ -1,5 +1,5 @@
 export type User = {
-    _id: number,
+    _id: string,
     firstname: string,
     lastname: string,
     email: string,
@@ -11,7 +11,7 @@ export type User = {
 }
 
 export type Product = {
-    id: number,
+    ID: number,
     name: string,
     price: number,
     id_restaurant: number,
@@ -52,7 +52,17 @@ export type Order = {
     updatedAt: string,
     orderContents: {
         idContent: number,
+        contentName: string,
         quantity: number,
         price: number
     }[]
+}
+
+export type Basket = {
+    userId: string,
+    products: {
+        idContent: number,
+        contentName: string,
+        quantity: number
+    }
 }

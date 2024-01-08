@@ -5,13 +5,17 @@ import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
 import { useFetchOrdersByEmail } from "@/hooks/order/use_fetch_orders_by_email";
 import { useAuth } from "@/hooks/useAuth";
-import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
+import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
+import { useEffect } from "react";
 
 export const CommandsPage = () => {
 
     const { user } = useAuth();
 
-    const commands = useFetchOrdersByEmail(user?.email ?? "oui");
+    const commands = useFetchOrdersByEmail(user?.email ?? "");
+
+    const restaurant = useFetchRestaurantById(commands && commands.data && commands.data.length > 0 ? commands.data[0].idRestaurant : -1)
+    
     console.log(commands.data)
 
     const getFullPrice = (products: any[]) => {
@@ -51,8 +55,8 @@ export const CommandsPage = () => {
                                                     <div className="w-14 h-14 rounded-full bg-zinc-200">
                                                     </div>
                                                     <div className="flex flex-col max-xl:hidden">
-                                                        <span className="text-lg font-bold">Nom Restaurant - {command.createdAt}</span>
-                                                        <span className="text-sm">Adresse restaurant</span>
+                                                        <span className="text-lg font-bold">{restaurant.data?.name} - {command.createdAt}</span>
+                                                        <span className="text-sm">{restaurant.data?.address}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -60,7 +64,7 @@ export const CommandsPage = () => {
                                                 <ul className="font-bold list-disc pl-8">
                                                     {command.orderContents.map((product) => {
                                                         return (
-                                                            <li key={product.id}>{product.idContent} ({product.price}€)</li>
+                                                            <li key={product.id}>{product.contentName} ({product.price}€)</li>
                                                         )
                                                     })}
                                                 </ul>

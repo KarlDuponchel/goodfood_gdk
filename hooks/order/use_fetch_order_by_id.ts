@@ -1,7 +1,7 @@
 import { apiFetch } from "@/utils/fetch";
 import { useQuery } from "react-query";
 
-const fetchOrdersByEmail = async (email: string) => {
+const fetchOrderById = async (id: number) => {
     return await apiFetch<{
         id: number,
         email: string,
@@ -23,12 +23,12 @@ const fetchOrdersByEmail = async (email: string) => {
             quantity: number,
             price: number
         }[]
-    }[]>(`/order/orders/user?email=${email}`);
+    }>(`/order/orders/${id}`);
 };
 
-export const useFetchOrdersByEmail = (email: string) => {
+export const useFetchOrderById = (id: number) => {
     return useQuery({
-        queryKey: ["orders-by-email", email],
-        queryFn: () => fetchOrdersByEmail(email),
+        queryKey: ["order-by-id", id],
+        queryFn: () => fetchOrderById(id),
       });
   };
