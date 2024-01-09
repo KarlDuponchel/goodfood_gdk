@@ -8,9 +8,10 @@ import { ProductBasket } from "@/containers/products/ProductBasket";
 import { Popup } from "@/components/blocks/Popup";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { CardProduct, Order } from "@/utils/types";
+import { CardProduct, Order, Product } from "@/utils/types";
 import { useAuth } from "@/hooks/useAuth";
-import { createOrder } from "@/services/Order";
+import { useFetchBasketByUserID } from "@/hooks/basket/use_fetch_basket_by_id";
+import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
 
 export const BasketPage = () => {
 
@@ -20,6 +21,8 @@ export const BasketPage = () => {
 
     const { toast } = useToast();
     const { user, status } = useAuth();
+
+    const basket = useFetchBasketByUserID(user ? user._id : "");
 
     //Constantes pour le modal Popup
     const [ouvrir, setOuvrir] = useState(false);
@@ -68,7 +71,7 @@ export const BasketPage = () => {
     const getTotalPrice = () => {
         let total = 0;
         for (let i = 0; i < cardProducts.length; i++) {
-            total += Number(cardProducts[i].nbProduct) * cardProducts[i].price;
+            total += Number(cardProducts[i].quantity) * 12;
         }
         return total.toFixed(2);
     }
@@ -82,7 +85,7 @@ export const BasketPage = () => {
     /**
      * Permet de soumettre la commande
      */
-    const submitCommand = () => {
+    /*const submitCommand = () => {
         if (adresseClient !== "") {
             const adresse = adresseClient.split(",");
             const indexOfCity = adresse[1].trim().indexOf(" ")
@@ -94,7 +97,6 @@ export const BasketPage = () => {
                     idContent: product.id,
                     quantity: Number(product.nbProduct),
                     contentName: product.name,
-                    price: product.price
                 }
             })
             
@@ -137,10 +139,10 @@ export const BasketPage = () => {
                 description: "Veuillez renseigner votre adresse de livraison",
             });
         }
-    }
+    }*/
 
+    console.log(user)
 
-    console.log(cardProducts)
     return (
         <>
             <Header toogle={updateShoppingCart} />
@@ -148,31 +150,60 @@ export const BasketPage = () => {
                 <div className='flex justify-between font-bold text-lg'>
                     <span>Votre <span className='text-primary'>panier</span></span>
                 </div>
-                {cardProducts.length === 0 ? (
-                    <div className="w-full flex flex-col justify-center items-center text-4xl animate-pulse">
-                        Votre panier est vide
-                    </div>
-                ) : (
-                <div className="w-full flex justify-center items-center">
-                    <div className="w-4/6 max-md:w-5/6 max-sm:w-11/12 h-3/4 flex flex-col">
-                        {cardProducts.map((product) => {
-                            return (
-                                <ProductBasket key={product.id} product={product} onUpdateCart={toogleFromChild} />
-                            )
-                        })}
-                        <div className="flex justify-end gap-3 mt-10">
-                            <div className="flex flex-col w-2/12 max-lg:w-1/4 max-md:w-1/3 gap-2">
-                                <div className="flex justify-between items-center">
-                                    <span className="font-bold">Total</span>
-                                    <span className="font-bold">{getTotalPrice()}€</span>
-                                </div>
-                                <div className="">
-                                    <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
+                {status !== 1 ? (
+                    cardProducts.length == 0 ? (
+                        <div className="w-full flex flex-col justify-center items-center text-4xl animate-pulse">
+                            Votre panier est vide
+                        </div>
+                    ) : (
+                        <div className="w-full flex justify-center items-center">
+                            <div className="w-4/6 max-md:w-5/6 max-sm:w-11/12 h-3/4 flex flex-col">
+                                {cardProducts.map((product) => {
+                                    return (
+                                        <ProductBasket key={product.idContent} productSent={product} onUpdateCart={toogleFromChild} />
+                                    )
+                                })}
+                                <div className="flex justify-end gap-3 mt-10">
+                                    <div className="flex flex-col w-2/12 max-lg:w-1/4 max-md:w-1/3 gap-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-bold">Total</span>
+                                            <span className="font-bold">{getTotalPrice()}</span>
+                                        </div>
+                                        <div className="">
+                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    )
+                ) : (
+                    basket.data && basket.data.products.length === 0 ? (
+                        <div className="w-full flex flex-col justify-center items-center text-4xl animate-pulse">
+                            Votre panier est vide
+                        </div>
+                    ) : (
+                        <div className="w-full flex justify-center items-center">
+                            <div className="w-4/6 max-md:w-5/6 max-sm:w-11/12 h-3/4 flex flex-col">
+                                {basket.data?.products.map((product) => {
+                                    return (
+                                        <ProductBasket key={product.idContent} productSent={product} onUpdateCart={toogleFromChild} />
+                                    )
+                                })}
+                                <div className="flex justify-end gap-3 mt-10">
+                                    <div className="flex flex-col w-2/12 max-lg:w-1/4 max-md:w-1/3 gap-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-bold">Total</span>
+                                            <span className="font-bold">Total PRICE A FAIRE€</span>
+                                        </div>
+                                        <div className="">
+                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
                 )}
                 <Popup 
                     btnLbl="Confirmer" 
@@ -180,7 +211,7 @@ export const BasketPage = () => {
                     content={`Souhaitez-vous vraiment commander ${cardProducts.length} article${cardProducts.length > 1 ? "s" : ""} pour un montant de ${getTotalPrice()}€ ?`} 
                     ouvrir={ouvrir} 
                     fermer={fermer} 
-                    submit={submitCommand} 
+                    submit={() => console.log("ok")} 
                 />
             </div>
             <Footer />

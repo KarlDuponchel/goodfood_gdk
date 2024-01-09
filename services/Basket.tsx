@@ -7,16 +7,12 @@ export async function createBasket(basket: Basket): Promise<any> {
         method: "POST",
         body: JSON.stringify({
             userId: basket.userId,
-            products: [{
-                idContent: basket.products.idContent,
-                contentName: basket.products.contentName,
-                quantity: basket.products.quantity
-            }]
+            products: basket.products
         }),
         headers: getHeaders()
     });
 
-    if (response.status !== 200) {
+    if (response.status !== 201) {
         const error = await response.json();
         throw new Error(error.message);
     }
@@ -24,21 +20,19 @@ export async function createBasket(basket: Basket): Promise<any> {
     return response.json()
 }
 
-export async function updateBasket(idUser: string, basket: Basket): Promise<any> {
-    const input = `${process.env.api}/order/orders`;
+export async function updateBasket(basket: Basket): Promise<any> {
+    const input = `${process.env.api}/order/baskets/${basket.userId}`;
     const response = await fetch(input, {
         method: "PUT",
         body: JSON.stringify({
-            userId: idUser,
+            userId: basket.userId,
             products: basket.products
         }),
         headers: getHeaders()
     });
 
-    if (response.status !== 200) {
+    if (response.status !== 204) {
         const error = await response.json();
         throw new Error(error.message);
     }
-
-    return response.json()
 }

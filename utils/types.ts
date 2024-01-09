@@ -11,6 +11,7 @@ export type User = {
 }
 
 export type Product = {
+    id: number,
     ID: number,
     name: string,
     price: number,
@@ -20,12 +21,9 @@ export type Product = {
 }
 
 export type CardProduct = {
-    id: number,
-    name: string,
-    price: number,
-    id_restaurant: number,
-    nbProduct: string,
-    image: string
+    idContent: number,
+    contentName: string,
+    quantity: number,
 }
 
 export type Restaurant = {
@@ -60,9 +58,9 @@ export type Order = {
 
 export type Basket = {
     userId: string,
-    products: {
+    products: [{
         idContent: number,
         contentName: string,
         quantity: number
-    }
+    }]
 }

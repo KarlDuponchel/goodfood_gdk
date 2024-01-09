@@ -1,18 +1,12 @@
 import { apiFetch } from "@/utils/fetch";
+import { Product } from "@/utils/types";
 import { useInfiniteQuery } from "react-query";
 
 const fetchAllProducts = async (page: number, limit: number) => {
     return await apiFetch<{
       page: number;
       count: number;
-      data: Array<{
-        id: number,
-        name: string,
-        price: number,
-        id_restaurant: number,
-        description: string,
-        image: string
-      }>;
+      data: Array<Product>;
       succeeded: boolean;
       errors: any;
       message: string;

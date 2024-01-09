@@ -2,7 +2,6 @@ import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
 import { getIngredientById } from "@/services/Product";
-import logo404 from '../../images/404.webp';
 import { useToast } from "@/components/ui/use-toast";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -12,9 +11,10 @@ import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Basket, Product } from "@/utils/types";
-import { createBasket } from "@/services/Basket";
+import { Basket, CardProduct, Product } from "@/utils/types";
+import { createBasket, updateBasket } from "@/services/Basket";
 import { useFetchOrderById } from "@/hooks/order/use_fetch_order_by_id";
+import { useFetchBasketByUserID } from "@/hooks/basket/use_fetch_basket_by_id";
 
 export type ProductDescProps = {
     /**
@@ -41,6 +41,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
     const product = useFetchProductByID(id)
     const ingredientsIds = useFetchIngredientsIdsByProductID(id).data;
     const restaurant = useFetchRestaurantById(product.data?.id_restaurant ?? -1)
+    const basket = useFetchBasketByUserID(user ? user._id : "");
 
     //Constantes
     const [ingredients, setIngredients] = useState<any[]>([]);
@@ -70,15 +71,6 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         }
         setIngredients(ingredientsToPush);
     }, [ingredientsIds])
-
-    useEffect(() => {
-        if (!product) return;
-        if (product.data?.image == "") {
-            setImageProduct(logo404.src);
-        } else {
-            setImageProduct(logo404.src);
-        }
-    }, [product]);
 
     /**
      * Gère l'affichage de la composition, et les animations
@@ -120,21 +112,18 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         if (!refNbProduct.current || !product) return;
         onUpdateCart(true);
         let nbProduct = refNbProduct.current.value;
-        let productToAdd = {
-            //Mettre à jour avec les champs du plat
-            id: id,
-            name: product.data?.name,
-            nbProduct: nbProduct,
-            price: product.data?.price,
-            image: imageProduct
+        let productToAdd: CardProduct = {
+            idContent: id,
+            contentName: product.data?.name ?? "",
+            quantity: Number(nbProduct),
         }
 
         if (localStorage.getItem("product")) {
-            let products = JSON.parse(localStorage.getItem("product") as string);
+            let products: CardProduct[] = JSON.parse(localStorage.getItem("product") as string);
 
             for (let i = 0; i < products.length; i++) {
-                if (products[i].id == id) {
-                    products[i].nbProduct = parseInt(products[i].nbProduct) + parseInt(nbProduct);
+                if (products[i].idContent == id) {
+                    products[i].quantity = products[i].quantity + parseInt(nbProduct);
                     localStorage.setItem("product", JSON.stringify(products));
                     return;
                 }
@@ -148,36 +137,73 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         }
         toast({
             title: "Produit ajouté au panier",
-            description: `${productToAdd.nbProduct} ${productToAdd.name} ${Number(productToAdd.nbProduct) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`,
+            description: `${productToAdd.quantity} ${productToAdd.contentName} ${Number(productToAdd.quantity) > 1 ? "ont été ajoutés" : "a été ajouté"} au panier avec succès !`,
             action: <ToastAction altText="Panier" className="border border-primary p-1 rounded hover:bg-zinc-200 transition" onClick={() => router.push("/basket")}>Panier</ToastAction>
         })
     }
 
     const addToBasket = (product: Product) => {
         if (!user) return;
-        const productObject = {
+        const productObject: Basket = {
             userId: user._id,
-            products: {
+            products: [{
                 idContent: product.ID,
                 contentName: product.name,
                 quantity: Number(refNbProduct.current?.value)
-            }
+            }]
         }
-        console.log(productObject)
-        createBasket(productObject).then(() => {
-            toast({
-                title: "Produit ajouté",
-                description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+
+        const contentObject = {
+            idContent: product.ID,
+            contentName: product.name,
+            quantity: Number(refNbProduct.current?.value)
+        }
+
+        if (basket.data) {
+            for (let i = 0; i < basket.data.products.length; i++) {
+                if (basket.data.products[i].idContent == product.ID) {
+                    basket.data.products[i].quantity += Number(refNbProduct.current?.value);
+                    updateBasket(basket.data).then(() => {
+                        toast({
+                            title: "Produit mis à jour",
+                            description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                        })
+                    })
+                    return;
+                }
+            }
+
+            const newProducts: Basket = {
+                userId: user._id,
+                products: basket.data.products
+            };
+
+            newProducts.products.push(contentObject)
+
+            updateBasket(newProducts).then(() => {
+                toast({
+                    title: "Produit ajouté",
+                    description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                })
             })
-        })
+        } else {
+            createBasket(productObject).then(() => {
+                toast({
+                    title: "Produit ajouté",
+                    description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                })
+            })
+        }
     }
+
+    console.log("origin", basket.data)
 
     if (!product.data || !ingredientsIds?.data || !ingredients || !restaurant.data) return (<div>Chargement...</div>)
 
     return (
         <div className="w-3/4 h-96 max-lg:h-fit bg-zinc-200 rounded-md flex max-lg:flex-col shadow-lg">
             <div className="w-1/3 h-full max-lg:w-full">
-                <Image src={imageProduct} alt="Image du produit" width={500} height={500} className="w-full h-full object-cover rounded-l-md" />
+                <Image src={"/images/burger.jpg"} alt="Image du produit" width={500} height={500} className="w-full h-full object-cover rounded-l-md" />
             </div>
             <div className="w-2/4 h-full flex flex-col pt-5 pl-10 max-lg:w-full max-lg:pr-10">
                 <div className="w-full flex justify-between font-black text-lg">
@@ -220,7 +246,7 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
                         <div className="w-full flex justify-end">
                             <BaseNbSelect ref={refNbProduct} className="justify-end" />
                         </div>
-                        <BaseButton className="w-full" label="Commander" onClick={() => addToBasket(product.data)} variant="primary" />
+                        <BaseButton className="w-full" label="Commander" onClick={() => {status === 1 ? addToBasket(product.data) : addToCard()}} variant="primary" />
                     </div>
                 </div>
             </div>

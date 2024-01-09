@@ -11,8 +11,8 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'bg-food': 'url("../images/food-bg-2.png")',
-        'logo-gf': 'url("../images/logoGF.png")',
+        'bg-food': 'url("../public/images/food-bg-2.png")',
+        'logo-gf': 'url("../public/images/logoGF.png")',
       },
       colors: {
         'primary': '#E8B10D',

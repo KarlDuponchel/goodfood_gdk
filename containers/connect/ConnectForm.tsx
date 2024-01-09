@@ -1,7 +1,6 @@
 'use client';
 
 import { BaseInputConnect } from "@/components/input/InputConnect";
-import logo from "../../images/logoGF.png";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
@@ -53,7 +52,7 @@ export const ConnectForm: FunctionComponent<ConnectFormProps> = () => {
     return (
         <div className="bg-slate-50 w-1/5 h-fit rounded-lg p-4 flex flex-col items-center max-xl:w-1/4 max-lg:w-1/3 max-md:w-1/2 max-sm:w-2/3">
             <div className="text-center text-3xl font-bold pb-2">
-                <Image alt="Logo goodfood" src={logo.src} width={120} height={120} />
+                <Image alt="Logo goodfood" src={"/images/logoGF.png"} width={120} height={120} />
             </div>
             <span className="bg-primary w-full h-0.5"/>
             <div className="flex flex-col justify-center gap-4 w-full py-4">

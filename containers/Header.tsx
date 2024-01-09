@@ -14,6 +14,7 @@ import { disconnect } from "@/services/User";
 import { useToast } from "@/components/ui/use-toast";
 import { getRestaurantsByName } from "@/services/Restaurants";
 import { Restaurant } from "@/utils/types";
+import { useFetchBasketByUserID } from "@/hooks/basket/use_fetch_basket_by_id";
 
 export type HeaderProps = {
     toogle?: boolean;
@@ -21,8 +22,9 @@ export type HeaderProps = {
 
 export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
 
-    const { status, logout } = useAuth();
+    const { user, status, logout } = useAuth();
     const { toast } = useToast();
+    const basket = useFetchBasketByUserID(user ? user._id : "");
 
     //Router next.js
     const router = useRouter();
@@ -121,10 +123,10 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     return (
         <div className="sticky flex justify-between items-center w-full top-0 z-10 bg-inherit px-8 py-1 h-20 shadow-md">
             <div className="w-1/4 h-full flex justify-start items-center max-md:hidden">
-                <a href="/"><Image alt="Logo du site" src={logo.src} width={140} height={140} /></a>
+                <a href="/"><Image alt="Logo du site" src={"/images/logoBlackPng.png"} width={140} height={140} /></a>
             </div>
             <div className="w-1/6 h-full hidden justify-start items-center max-md:flex">
-                <a href="/"><Image alt="Logo du site" src={smallLogo.src} width={80} height={80} /></a>
+                <a href="/"><Image alt="Logo du site" src={"/images/logoGF.png"} width={80} height={80} /></a>
             </div>
             <div className="w-2/4 flex justify-center items-center gap-4 h-full max-md:w-4/6">
                 <div className={`w-1/2 relative max-lg:${showAddress} flex gap-2`}>
@@ -183,7 +185,7 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         <a className="relative" href="/basket">
                             <ShoppingCartIcon className="w-6 text-black" />
                             {cardProducts.length > 0 ? (
-                                <span className="absolute font-bold animate-bounce flex justify-center items-center w-4 h-4 text-sm rounded-full bg-primary -top-2 -right-2">{cardProducts.length}</span>
+                                <span className="absolute font-bold animate-bounce flex justify-center items-center w-4 h-4 text-sm rounded-full bg-primary -top-2 -right-2">{status == 1 ? basket.data?.products.length : cardProducts.length}</span>
                             ) : ""}
                         </a>
                         <span className="cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)}>
@@ -219,14 +221,14 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                             </a>
                             <a href="/basket" className="cursor-pointer hover:bg-zinc-300 flex gap-2">
                                 <ShoppingCartIcon className="w-5" />
-                                <span>Panier</span>
+                                <span>Panier - {cardProducts.length}</span>
                             </a>
                         </div>
                     ) : (
                         <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
                             <a href="/basket" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
                                 <ShoppingCartIcon className="w-5" />
-                                <span>Panier</span>
+                                <span>Panier - {status === 1 ? basket.data?.products.length : cardProducts.length}</span>
                             </a>
                             <a href="/commands" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
                                 <InboxIcon className="w-5" />
