@@ -14,8 +14,6 @@ export default function Page({
     params: { slug: number };
   }) {
 
-    const products = useFetchAllProducts(1, 4);
-
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
 
     const toogleFromChild = (n: any) => {

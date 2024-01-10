@@ -103,6 +103,26 @@ export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
             }
         }
     }
+
+    const updateQuandityBasket = (id: number) => {
+        if (!refBaseNbSelect.current || !basket.data) return;
+        onUpdateCart(true);
+
+        const products = basket.data.products
+
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].idContent === id) {
+                basket.data.products[i].quantity = Number(refBaseNbSelect.current.value);
+                updateBasket(basket.data).then(() => {
+                    toast({
+                        title: "Produit mis à jour",
+                        description: `Le produit a été modifié`
+                    })
+                })
+                return;
+            }
+        }
+    }
     
     return (
         <div className="w-full border-b border-zinc-300 mt-3">
@@ -124,7 +144,7 @@ export const ProductBasket: FunctionComponent<ProductBasketProps> = ({
                 </div>
                 <div className="relative flex flex-col items-end gap-3">
                     <div className="flex gap-1">
-                        <BaseNbSelect ref={refBaseNbSelect} onChange={() => updateNbProducts(productSent.idContent)} defaultValue={productSent.quantity}/>
+                        <BaseNbSelect ref={refBaseNbSelect} onChange={() => status === 1 ? updateQuandityBasket(product.data && product.data.ID ? product.data.ID : -1) : updateNbProducts(productSent.idContent)} defaultValue={productSent.quantity}/>
                         <TrashIcon className="absolute cursor-pointer w-6 text-red-500 -right-7 top-10" onClick={() => status === 1 ? deleteFromBasket(product.data && product.data.ID ? product.data.ID : -1) : deleteFromCart(productSent.idContent)} />
                     </div>
                     <span className="font-black text-lg">{product.data && (Number(productSent.quantity) * product.data?.price).toFixed(2)}€</span>

@@ -37,6 +37,7 @@ export type Restaurant = {
 }
 
 export type Order = {
+    id?: number,
     email: string,
     idRestaurant: number,
     country: string,
@@ -54,6 +55,19 @@ export type Order = {
         quantity: number,
         price: number
     }[]
+}
+
+export type OrderBody = {
+    email: string,
+    idRestaurant: number,
+    country: string,
+    city: string,
+    address: string,
+    additionnalAddress: string,
+    zipCode: string,
+    commandType: string,
+    createdAt: string,
+    updatedAt: string
 }
 
 export type Basket = {

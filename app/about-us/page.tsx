@@ -1,6 +1,6 @@
 import { Footer } from "@/containers/Footer";
 import { Header } from "@/containers/Header";
-import logoGoodFood from '../../images/logoBlackPng.png';
+import Image from "next/image";
 
 export const metadata = {
     title: "A propos de nous"
@@ -18,7 +18,7 @@ export default function AboutUs() {
                 <div className="w-full flex justify-center">
                     <div className="w-1/2 flex flex-col gap-8">
                         <div className="w-full justify-center flex">
-                            <img src={logoGoodFood.src} className="" alt="Logo goodfood" width={350} />
+                            <Image src={"/images/logoBlackPng.png"} className="" alt="Logo goodfood" width={350} height={350} />
                         </div>
                         <div>
                             <p className="text-justify">

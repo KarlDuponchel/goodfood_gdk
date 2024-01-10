@@ -4,7 +4,7 @@ import { BaseButton } from "@/components/button/Button";
 import { BaseNbSelect } from "@/components/input/SelectNbProduct";
 import { useToast } from "@/components/ui/use-toast";
 import { useFetchAllProducts } from "@/hooks/catalog/use_fetch_all_products"
-import { FunctionComponent, useRef } from "react";
+import { FunctionComponent, useRef, useState } from "react";
 import { Basket, CardProduct, Product } from "@/utils/types";
 import Image from "next/image";
 import { ToastAction } from "@radix-ui/react-toast";
@@ -52,6 +52,12 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
 
     const refNbProduct = useRef<HTMLSelectElement>(null);
 
+    const [nbProduct, setNbProduct] = useState(1);
+
+    const updateNbProduct = (event: any) => {
+        setNbProduct(event.target.value)
+    }
+
     /**
      * Formate le nom du produit
      * @param name Nom du produit
@@ -68,21 +74,17 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
      * @returns 
      */
     const addToCard = (product: Product) => {
-        if (!refNbProduct.current) return;
         onUpdateCart(true)
-        let nbProduct = refNbProduct.current.value;
         let productSent: CardProduct = {
             idContent: product.id,
             contentName: product.name,
-            quantity: Number(nbProduct),
+            quantity: nbProduct,
         }
         if (localStorage.getItem("product")) {
             let products: CardProduct[] = JSON.parse(localStorage.getItem("product") as string);
-            console.log(products);
-            console.log(product)
             for (let i = 0; i < products.length; i++) {
                 if (products[i].idContent == product.id) {
-                    products[i].quantity = products[i].quantity + parseInt(nbProduct);
+                    products[i].quantity = products[i].quantity + nbProduct;
                     localStorage.setItem("product", JSON.stringify(products));
                     return;
                 }
@@ -108,24 +110,25 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
             products: [{
                 idContent: product.id,
                 contentName: product.name,
-                quantity: Number(refNbProduct.current?.value)
+                quantity: nbProduct
             }]
         }
 
         const contentObject = {
             idContent: product.id,
             contentName: product.name,
-            quantity: Number(refNbProduct.current?.value)
+            quantity: nbProduct
         }
 
         if (basket.data) {
             for (let i = 0; i < basket.data.products.length; i++) {
                 if (basket.data.products[i].idContent == product.id) {
-                    basket.data.products[i].quantity += Number(refNbProduct.current?.value);
+                    basket.data.products[i].quantity += nbProduct;
                     updateBasket(basket.data).then(() => {
                         toast({
                             title: "Produit mis à jour",
-                            description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                            description: `${nbProduct} ${product.name} ${nbProduct > 1 ? "ajoutés" : "ajouté"} au panier`,
+                            action: <ToastAction altText="Panier" className="border border-primary p-1 rounded hover:bg-zinc-200 transition" onClick={() => router.push("/basket")}>Panier</ToastAction>
                         })
                     })
                     return;
@@ -142,14 +145,16 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
             updateBasket(newProducts).then(() => {
                 toast({
                     title: "Produit ajouté",
-                    description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                    description: `${nbProduct} ${product.name} ${nbProduct > 1 ? "ajoutés" : "ajouté"} au panier`,
+                    action: <ToastAction altText="Panier" className="border border-primary p-1 rounded hover:bg-zinc-200 transition" onClick={() => router.push("/basket")}>Panier</ToastAction>
                 })
             })
         } else {
             createBasket(productObject).then(() => {
                 toast({
                     title: "Produit ajouté",
-                    description: `${refNbProduct.current?.value} ${product.name} ${Number(refNbProduct.current?.value) > 1 ? "ajoutés" : "ajouté"} au panier`
+                    description: `${nbProduct} ${product.name} ${nbProduct > 1 ? "ajoutés" : "ajouté"} au panier`,
+                    action: <ToastAction altText="Panier" className="border border-primary p-1 rounded hover:bg-zinc-200 transition" onClick={() => router.push("/basket")}>Panier</ToastAction>
                 })
             })
         }
@@ -184,7 +189,7 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
                                     <div className="flex justify-between">
                                         <span className="font-bold" title={product.name}>{formatProductName(product.name)}</span>
                                         <div className="flex gap-2">
-                                            <div> <BaseNbSelect ref={refNbProduct} /> </div>
+                                            <div> <BaseNbSelect onChange={updateNbProduct} /> </div>
                                             <BaseButton onClick={() => {status === 1 ? addToBasket(product) : addToCard(product)}} 
                                             className="h-7 px-1 py-0 flex items-center hover:opacity-80" variant="primary" label="Ajouter" />
                                         </div>

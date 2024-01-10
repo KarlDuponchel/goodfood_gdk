@@ -196,8 +196,6 @@ export const ProductDesc: FunctionComponent<ProductDescProps> = ({id, onUpdateCa
         }
     }
 
-    console.log("origin", basket.data)
-
     if (!product.data || !ingredientsIds?.data || !ingredients || !restaurant.data) return (<div>Chargement...</div>)
 
     return (

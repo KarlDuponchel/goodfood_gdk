@@ -15,6 +15,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { getRestaurantsByName } from "@/services/Restaurants";
 import { Restaurant } from "@/utils/types";
 import { useFetchBasketByUserID } from "@/hooks/basket/use_fetch_basket_by_id";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { CarIcon, LogOut, ShoppingBag, ShoppingCart, User } from "lucide-react";
 
 export type HeaderProps = {
     toogle?: boolean;
@@ -95,6 +98,8 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
     const removeRestaurants = () => {
         if (!refRestaurant.current) return;
         refRestaurant.current.value = "";
+
+        setRestaurantsSearched([])
     }
 
     const handleShowSearch = () => {
@@ -132,13 +137,13 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                 <div className={`w-1/2 relative max-lg:${showAddress} flex gap-2`}>
                     <div className="flex w-full">
                         <BaseInput ref={refAddress} className="w-96" placeholder={nameAddress} list="addresses" onChange={handleChangeAddress} />
-                        <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                        <span className="w-10 h-10 border-r border-y rounded-r-lg border-black bg-zinc-200 grid place-items-center">
                             <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeAddress} />
                         </span>
                     </div>
                     <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {potentialAddresses && potentialAddresses.length > 0 ? (
-                        <div className="absolute bg-zinc-200 top-10 w-11/12 ml-4 p-1 rounded-b-lg">
+                        <div className="absolute bg-zinc-200 top-10 w-full p-1 rounded-b-lg">
                             {potentialAddresses.map((address, key) => {
                                 const nameAddress = `${address.address_line1}, ${address.address_line2}`;
                                 return (
@@ -153,13 +158,13 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                 <div className={`w-1/2 relative max-lg:${showSearch} flex gap-2`}>
                     <div className="flex w-full">
                         <BaseInput ref={refRestaurant} className="w-96" onChange={handleSearchRestaurants} placeholder="Rechercher parmis nos restaurants"/>
-                        <span className="w-10 h-10 border-r border-y rounded-r-full border-black bg-zinc-200 grid place-items-center">
+                        <span className="w-10 h-10 border-r border-y rounded-r-lg border-black bg-zinc-200 grid place-items-center">
                             <XMarkIcon className="p-[3px] cursor-pointer w-7 hover:bg-zinc-300 rounded-full transition ease-in-out duration-150" onClick={removeRestaurants} />
                         </span>
                     </div>
                     <ArrowPathIcon className="w-6 hidden max-lg:block cursor-pointer" onClick={handleShowSearch}/>
                     {restaurantsSearched && restaurantsSearched.length > 0 ? (
-                        <div className="absolute bg-zinc-200 top-10 w-11/12 ml-4 p-1 rounded-b-lg">
+                        <div className="absolute bg-zinc-200 top-10 w-full p-1 rounded-b-lg">
                         {restaurantsSearched.map((restaurant, key) => {
                             return (
                                 <div className={`flex flex-col transition duration-100 justify-between hover:bg-zinc-300 ${key !== restaurantsSearched.length - 1 ? `border-b border-zinc-300` : ""} cursor-pointer text-sm`} key={key}>
@@ -171,29 +176,46 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                     ) : ""}
                 </div>
             </div>
-            <div className="transform transition-all w-1/4 h-full flex justify-end gap-10 items-center max-lg:hidden">
+            <div className="transform transition-all w-1/4 h-full flex justify-end items-center max-lg:hidden">
                 {status !== 1 ? (
-                    <div className="flex max-xl:gap-4">
-                        <BaseButton label="Connexion" className="w-32" onClick={() => router.push("/connect")} variant="zinc"/>
-                        <BaseButton label="Inscription" className="w-32" onClick={() => router.push("/register")} variant="black"/>
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <BaseButton className="focus:outline-none" label="Mon compte" variant="zinc"></BaseButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56 bg-zinc-200 border border-black mr-4">
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem className="flex items-center focus:border-black" onClick={() => router.push("/connect")}>
+                                    <User className="mr-2 h-5 w-5"></User>
+                                    <span>Connexion</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center" onClick={() => router.push("/register")}>
+                                    <UserPlusIcon className="mr-1 h-6 w-6"></UserPlusIcon>
+                                    <span>Inscription</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center" onClick={() => router.push("/basket")}>
+                                    <ShoppingCart className="mr-2 h-5 w-5"></ShoppingCart>
+                                    <span>Panier {cardProducts.length > 1 && ` - ${cardProducts.length}`}</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 ) : !toogleAccount ? (
-                    <>
+                    <div className="flex gap-10">
                         <a href="/commands">
-                            <InboxIcon className="w-6 text-black" />
+                            <ShoppingBag className="w-6 text-black" />
                         </a>
                         <a className="relative" href="/basket">
-                            <ShoppingCartIcon className="w-6 text-black" />
-                            {cardProducts.length > 0 ? (
+                            <ShoppingCart className="w-6 text-black" />
+                            {cardProducts.length > 0 || basket.data && basket.data?.products.length > 0 ? (
                                 <span className="absolute font-bold animate-bounce flex justify-center items-center w-4 h-4 text-sm rounded-full bg-primary -top-2 -right-2">{status == 1 ? basket.data?.products.length : cardProducts.length}</span>
                             ) : ""}
                         </a>
                         <span className="cursor-pointer" onClick={() => setToogleAccount(!toogleAccount)}>
-                            <UserCircleIcon className="w-6 text-black" />
+                            <User className="w-6 text-black" />
                         </span>
-                    </>
+                    </div>
                 ) : (
-                    <>
+                    <div className="flex items-center gap-6 max-[1090px]:gap-2">
                         <a className="cursor-pointer hover:underline" href="/account">
                             Mon compte
                         </a>
@@ -203,48 +225,52 @@ export const Header: FunctionComponent<HeaderProps> = ({toogle}) => {
                         <span>
                             <XMarkIcon className="w-7 text-black cursor-pointer hover:bg-zinc-200 rounded-full p-1" onClick={() => setToogleAccount(!toogleAccount)} />
                         </span>
-                    </>
+                    </div>
                 )}
             </div>
             <div className="max-lg:flex max-lg:w-1/12 justify-end items-center hidden w-1/4 relative">
-                <Bars3Icon className="cursor-pointer w-7" onClick={() => setShowMenu(!showMenu)} />
-                {showMenu ? (
-                    status !== 1 ? (
-                        <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
-                            <a href="/connect" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <UserIcon className="w-5" />
-                                <span>Connexion</span>
-                            </a>
-                            <a href="/register" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <UserPlusIcon className="w-5" />
-                                <span>Inscription</span>
-                            </a>
-                            <a href="/basket" className="cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <ShoppingCartIcon className="w-5" />
-                                <span>Panier - {cardProducts.length}</span>
-                            </a>
-                        </div>
-                    ) : (
-                        <div className="absolute w-48 h-fit flex flex-col rounded-md rounded-tr-none bg-zinc-200 top-9 right-0.5 p-1">
-                            <a href="/basket" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <ShoppingCartIcon className="w-5" />
-                                <span>Panier - {status === 1 ? basket.data?.products.length : cardProducts.length}</span>
-                            </a>
-                            <a href="/commands" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <InboxIcon className="w-5" />
-                                <span>Mes commandes</span>
-                            </a>
-                            <a href="/account" className="border-b border-zinc-300 cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <UserCircleIcon className="w-5" />
-                                <span>Mon compte</span>
-                            </a>
-                            <div className="cursor-pointer hover:bg-zinc-300 flex gap-2">
-                                <ArrowRightOnRectangleIcon className="w-5" />
-                                <span onClick={logout}>Déconnexion</span>
-                            </div>
-                        </div>
-                    )
-            ): ""}
+                <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Bars3Icon className="cursor-pointer w-7" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56 bg-zinc-200 border border-black mr-4 mt-1">
+                            {status !== 1 ? (
+                                <DropdownMenuGroup>
+                                <DropdownMenuItem className="flex items-center focus:border-black" onClick={() => router.push("/connect")}>
+                                    <User className="mr-2 h-5 w-5"></User>
+                                    <span>Connexion</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center" onClick={() => router.push("/register")}>
+                                    <UserPlusIcon className="mr-1 h-6 w-6"></UserPlusIcon>
+                                    <span>Inscription</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex items-center" onClick={() => router.push("/basket")}>
+                                    <ShoppingCart className="mr-2 h-5 w-5"></ShoppingCart>
+                                    <span>Panier {cardProducts.length > 0 && ` - ${cardProducts.length}`}</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            ) : (
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className="flex items-center focus:border-black" onClick={() => router.push("/basket")}>
+                                        <ShoppingCart className="mr-2 h-5 w-5"></ShoppingCart>
+                                        <span>Panier {basket.data && basket.data.products.length > 0 && ` - ${basket.data.products.length}`}</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="flex items-center" onClick={() => router.push("/commands")}>
+                                        <ShoppingBag className="mr-2 h-5 w-5"></ShoppingBag>
+                                        <span>Mes commandes</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="flex items-center" onClick={() => router.push("/account")}>
+                                        <User className="mr-2 h-5 w-5"></User>
+                                        <span>Mon compte</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="flex items-center" onClick={logout}>
+                                        <LogOut className="mr-2 h-5 w-5"></LogOut>
+                                        <span>Déconnexion</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
             </div>
         </div>
         )

@@ -8,10 +8,12 @@ import { ProductBasket } from "@/containers/products/ProductBasket";
 import { Popup } from "@/components/blocks/Popup";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { CardProduct, Order, Product } from "@/utils/types";
+import { Basket, CardProduct, Order, Product } from "@/utils/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useFetchBasketByUserID } from "@/hooks/basket/use_fetch_basket_by_id";
 import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
+import { PopupInput } from "@/components/blocks/PopupInput";
+import { createBasket } from "@/services/Basket";
 
 export const BasketPage = () => {
 
@@ -26,15 +28,32 @@ export const BasketPage = () => {
 
     //Constantes pour le modal Popup
     const [ouvrir, setOuvrir] = useState(false);
+    const [ouvrirInput, setOuvrirInput] = useState(false);
+
+    const [inputDialog, setInputDialog] = useState("");
 
     const open = (event: FormEvent) => {
         event.preventDefault();
         setOuvrir(true);
     };
 
+    const openInput = (event: FormEvent) => {
+        event.preventDefault();
+        setOuvrirInput(true);
+    }
+
     const fermer = () => {
         setOuvrir(false);
+        setOuvrirInput(false);
     };
+
+    const getInputDialog = (n: string) => {
+        setInputDialog(n);
+    }
+
+    useEffect(() => {
+        localStorage.setItem("email", inputDialog)
+    }, [inputDialog])
 
     const [updateShoppingCart, setUpdateShoppingCart] = useState<boolean>(false);
 
@@ -80,6 +99,36 @@ export const BasketPage = () => {
         return (
             <div>Chargement...</div>
         )
+    }
+
+    const confirmCommand = () => {
+        if (adresseClient == "") {
+            setOuvrir(false);
+            toast({
+                variant: "destructive",
+                title: "Erreur",
+                description: "Veuillez renseigner votre adresse de livraison",
+            });
+        } else {
+            if (user) {
+                router.push("/validate");
+            } else {
+                const products = cardProducts.map((val) => {
+                    return {
+                        idContent: val.idContent,
+                        contentName: val.contentName,
+                        quantity: val.quantity
+                    }
+                })
+                const orderBody = {
+                    userId: inputDialog,
+                    products: products
+                }
+                createBasket(orderBody).then(() => {
+                    router.push("/validate")
+                })
+            }
+        }
     }
 
     /**
@@ -141,8 +190,6 @@ export const BasketPage = () => {
         }
     }*/
 
-    console.log(user)
-
     return (
         <>
             <Header toogle={updateShoppingCart} />
@@ -170,7 +217,7 @@ export const BasketPage = () => {
                                             <span className="font-bold">{getTotalPrice()}</span>
                                         </div>
                                         <div className="">
-                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
+                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={openInput} variant="primary" label="Confirmer" />
                                         </div>
                                     </div>
                                 </div>
@@ -197,7 +244,7 @@ export const BasketPage = () => {
                                             <span className="font-bold">Total PRICE A FAIRE€</span>
                                         </div>
                                         <div className="">
-                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Commander" />
+                                            <BaseButton className="w-full transition-all duration-75 hover:scale-105" onClick={open} variant="primary" label="Confirmer" />
                                         </div>
                                     </div>
                                 </div>
@@ -205,14 +252,26 @@ export const BasketPage = () => {
                         </div>
                     )
                 )}
-                <Popup 
-                    btnLbl="Confirmer" 
+                {basket.data && basket.data.products ? (
+                    <Popup 
+                    btnLbl="Commander" 
                     title="Confirmation de commande" 
-                    content={`Souhaitez-vous vraiment commander ${cardProducts.length} article${cardProducts.length > 1 ? "s" : ""} pour un montant de ${getTotalPrice()}€ ?`} 
+                    content={`Souhaitez-vous vraiment commander ${basket.data.products.length} article(s) ?`} 
                     ouvrir={ouvrir} 
                     fermer={fermer} 
-                    submit={() => console.log("ok")} 
+                    submit={confirmCommand} 
                 />
+                ) : (
+                    <PopupInput 
+                        btnLbl="Commander" 
+                        title="Confirmation de commande" 
+                        content={`Souhaitez-vous vraiment commander ${cardProducts.length} article${cardProducts.length > 1 ? "s" : ""} pour un montant de ${getTotalPrice()}€ ?`} 
+                        ouvrir={ouvrirInput} 
+                        fermer={fermer} 
+                        submit={confirmCommand}
+                        inputValue={getInputDialog}
+                    />
+                )}
             </div>
             <Footer />
         </>

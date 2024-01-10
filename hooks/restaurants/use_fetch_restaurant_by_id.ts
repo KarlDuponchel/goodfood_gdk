@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 
 const fetchRestaurantById = async (id: number) => {
     return await apiFetch<{
-        id: number,
+        ID: number,
         name: string,
         address: string,
         additional_address: string,
