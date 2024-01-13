@@ -86,6 +86,7 @@ export const ValidatePage = () => {
             }
 
             validateBasket(emailDisconnectUser, orderBody).then((value: Order) => {
+                localStorage.removeItem("product")
                 toast({
                     title: "Commande créée",
                     description: "Votre commande a bien été créée, vous allez être ridirigé"

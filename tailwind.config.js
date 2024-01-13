@@ -2,9 +2,9 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './containers/**/*.{js,ts,jsx,tsx,mdx}',
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./containers/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   prefix: "",
   theme: {
@@ -17,18 +17,25 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        'bg-food': 'url("../public/images/food-bg-2.png")',
-        'logo-gf': 'url("../public/images/logoGF.png")',
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        "bg-food": 'url("../public/images/food-bg-2.png")',
+        "logo-gf": 'url("../public/images/logoGF.png")',
+        "bg-partner": 'url("../public/images/Food Banner.jpeg")',
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      gridTemplateRows: {
+        10: "repeat(10, minmax(0, 1fr))",
+      },
+      gridRow: {
+        "span-8": "span 8 / span 8",
       },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        'primary': '#E8B10D',
-        'background': '#F2F2F2',
+        primary: "#E8B10D",
+        background: "#F2F2F2",
         foreground: "hsl(var(--foreground))",
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -77,4 +84,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
