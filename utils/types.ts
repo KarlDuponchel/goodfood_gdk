@@ -14,6 +14,7 @@ export type User = {
     __v: number;
   };
   restaurant: number;
+  _restaurant: number;
 };
 
 export type Product = {
@@ -40,6 +41,15 @@ export type Restaurant = {
   city: string;
   zip_code: string;
   country: string;
+};
+
+export type PostProduct = {
+  activated: boolean;
+  description: string;
+  id_restaurant: number;
+  image?: string;
+  name: string;
+  price: number;
 };
 
 export type Order = {

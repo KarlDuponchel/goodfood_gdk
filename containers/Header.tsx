@@ -31,7 +31,7 @@ export type HeaderProps = {
 };
 
 export const Header: FunctionComponent<HeaderProps> = ({ toogle }) => {
-  const { user, status, logout } = useAuth();
+  const { user, status, role, logout } = useAuth();
   const basket = useFetchBasketByUserID(user ? user._id : "");
 
   //Router next.js
@@ -132,6 +132,10 @@ export const Header: FunctionComponent<HeaderProps> = ({ toogle }) => {
       setRestaurantsSearched([]);
     }
   };
+
+  if (role > 1) {
+    router.push("/partners");
+  }
 
   return (
     <div className="sticky top-0 z-10 flex h-20 w-full items-center justify-between bg-inherit px-8 py-1 shadow-md">
