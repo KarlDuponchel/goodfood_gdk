@@ -133,10 +133,6 @@ export const Header: FunctionComponent<HeaderProps> = ({ toogle }) => {
     }
   };
 
-  if (role > 1) {
-    router.push("/partners");
-  }
-
   return (
     <div className="sticky top-0 z-10 flex h-20 w-full items-center justify-between bg-inherit px-8 py-1 shadow-md">
       <div className="flex h-full w-1/4 items-center justify-start max-md:hidden">

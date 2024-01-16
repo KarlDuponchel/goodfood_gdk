@@ -101,15 +101,6 @@ export const ConnectForm: FunctionComponent<ConnectFormProps> = () => {
           className="w-full"
         />
       </div>
-      <div className="flex w-full items-center justify-center gap-2 pt-6">
-        <span className="text-gray-400">Vous êtes livreur ?</span>
-        <a
-          className="cursor-pointer text-primary hover:underline"
-          href="/partners/connect"
-        >
-          Cliquez ici
-        </a>
-      </div>
     </div>
   );
 };

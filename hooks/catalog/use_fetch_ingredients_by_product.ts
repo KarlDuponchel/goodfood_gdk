@@ -1,20 +1,16 @@
 import { apiFetch } from "@/utils/fetch";
+import { ProductIngredients } from "@/utils/types";
 import { useQuery } from "react-query";
 
 const fetchIngredientsIdsByProductID = async (id: number) => {
-    return await apiFetch<{
-        count: number;
-        data: Array<{
-            id_ingredient: number,
-            id_product: number,
-            required_quantity: number
-        }>
-    }>(`/catalog/product-ingredients?id_product=${id}`);
+  return await apiFetch<ProductIngredients>(
+    `/catalog/product-ingredients?id_product=${id}`,
+  );
 };
 
 export const useFetchIngredientsIdsByProductID = (id: number) => {
-    return useQuery({
-        queryKey: ["product-ingredients-by-id", id],
-        queryFn: () => fetchIngredientsIdsByProductID(id),
-      });
-  };
+  return useQuery({
+    queryKey: ["product-ingredients-by-id", id],
+    queryFn: () => fetchIngredientsIdsByProductID(id),
+  });
+};

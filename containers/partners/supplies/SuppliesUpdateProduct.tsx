@@ -15,48 +15,47 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { addProduct } from "@/services/Product";
-import { PostProduct } from "@/utils/types";
-import { useRouter } from "next/navigation";
+import { useFetchProductByID } from "@/hooks/catalog/use_fetch_product_by_id";
+import { updateProduct } from "@/services/Product";
+import { Pencil } from "lucide-react";
 
-type SuppliesAddProductProps = {
-  idRestaurant: number;
+type SuppliesUpdateProductProps = {
+  idProduct: number;
 };
 
-export const SuppliesAddProduct: FunctionComponent<SuppliesAddProductProps> = ({
-  idRestaurant,
-}) => {
+export const SuppliesUpdateProduct: FunctionComponent<
+  SuppliesUpdateProductProps
+> = ({ idProduct }) => {
+  const product = useFetchProductByID(idProduct);
   const { toast } = useToast();
 
   const formData = new FormData();
-  const router = useRouter();
 
   const [nameProduct, setNameProduct] = useState("");
   const [descriptionProduct, setDescriptionProduct] = useState("");
   const [priceProduct, setPriceProduct] = useState("");
   const [imageProduct, setImageProduct] = useState("");
+  const [activatedProduct, setActivatedProduct] = useState<boolean>();
 
-  const submitProduct = () => {
-    const object = {
-      activated: false,
-      description: descriptionProduct,
-      id_restaurant: idRestaurant,
-      name: nameProduct,
-      price: priceProduct,
-    };
+  const submitChange = () => {
+    if (nameProduct !== "") {
+      formData.append("name", nameProduct);
+    }
+    if (descriptionProduct !== "") {
+      formData.append("description", descriptionProduct);
+    }
+    if (priceProduct !== "") {
+      formData.append("price", priceProduct);
+    }
+    if (activatedProduct !== undefined) {
+      formData.append("activated", String(activatedProduct));
+    }
 
-    formData.append("name", object.name);
-    formData.append("description", object.description);
-    formData.append("price", object.price);
-    formData.append("activated", String(object.activated));
-    formData.append("file", "");
-    formData.append("id_restaurant", String(idRestaurant));
-
-    addProduct(formData)
-      .then(() => {
+    updateProduct(idProduct, formData)
+      .then((value) => {
         toast({
-          title: "Produit ajouté",
-          description: "Le produit a bien été ajouté",
+          title: "Produit modifié",
+          description: `Le produit ${value.name} a bien été modifié`,
         });
       })
       .catch(() => {
@@ -68,16 +67,17 @@ export const SuppliesAddProduct: FunctionComponent<SuppliesAddProductProps> = ({
       });
   };
 
+  if (!product.data) return <div>loading...</div>;
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <BaseButton variant="black" label="Ajouter un produit" />
+        <Pencil className="h-5 w-5 cursor-pointer hover:text-primary" />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Ajouter un produit</DialogTitle>
+          <DialogTitle>Modifier {product.data.name}</DialogTitle>
           <DialogDescription>
-            Renseignez les informations ci dessous afin d'ajouter un produit
+            Modifiez les champs que vous souhaitez mettre à jour
           </DialogDescription>
         </DialogHeader>
         <div className="flex w-full flex-col gap-2 pt-4">
@@ -85,7 +85,7 @@ export const SuppliesAddProduct: FunctionComponent<SuppliesAddProductProps> = ({
             <span>Nom du produit</span>
             <Input
               className="w-5/6"
-              placeholder="ex: Salade césar"
+              placeholder={product.data.name}
               onChange={(e) => setNameProduct(e.target.value)}
             />
           </div>
@@ -93,44 +93,38 @@ export const SuppliesAddProduct: FunctionComponent<SuppliesAddProductProps> = ({
             <span>Description</span>
             <Textarea
               className="w-5/6"
-              placeholder="ex: Pizza composée de ..."
+              placeholder={product.data.description}
               onChange={(e) => setDescriptionProduct(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1">
             <span>Prix</span>
             <Input
-              className="w-5/6"
               type="number"
-              placeholder="ex: 8.99"
+              className="w-5/6"
+              placeholder={String(product.data.price)}
               onChange={(e) => setPriceProduct(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1">
             <span>Image</span>
-            <Input
-              className="w-5/6"
-              accept="image/png, image/jpeg, image/jpg"
-              type="file"
-              onChange={(e) => {
-                console.log(e.target.files);
-                setImageProduct(
-                  e.target.files && e.target.files[0].name
-                    ? e.target.files[0].name
-                    : "",
-                );
-              }}
+            <Input type="file" className="w-5/6" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span>Est activé ?</span>
+            <Switch
+              defaultChecked={product.data.activated}
+              onCheckedChange={(e) => setActivatedProduct(e)}
             />
           </div>
-          <DialogFooter className="flex w-full justify-end pt-4">
-            <BaseButton
-              label="Ajouter"
-              className="w-24"
-              variant="black"
-              onClick={submitProduct}
-            />
-          </DialogFooter>
         </div>
+        <DialogFooter>
+          <BaseButton
+            variant="black"
+            label="Confirmer"
+            onClick={submitChange}
+          />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

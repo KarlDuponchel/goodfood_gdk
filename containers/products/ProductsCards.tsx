@@ -215,52 +215,56 @@ export const ProductsCards: FunctionComponent<ProductsCardProps> = ({
         {products.isLoading && <div>Chargement...</div>}
 
         {products.data?.pages.map((page) => {
-          return page.data.map((product: Product) => {
-            return (
-              <div
-                key={product.id}
-                className="h-fit-content w-64 rounded bg-zinc-200 shadow-lg transition-all duration-200 hover:scale-105"
-              >
-                <div className="relative h-5/6 w-full cursor-pointer">
-                  <a href={`/products/${product.id}`}>
-                    <Image
-                      src={"/images/burger.jpg"}
-                      alt={product.name}
-                      className="h-full w-full rounded-t object-cover"
-                      width={500}
-                      height={500}
-                    />
-                  </a>
-                  <span className="absolute -right-4 -top-2 grid place-items-center rounded-full bg-primary p-1 font-bold text-black">
-                    {product.price}€
-                  </span>
-                </div>
-                <div className="flex flex-col gap-2 p-2">
-                  <div className="flex justify-between">
-                    <span className="font-bold" title={product.name}>
-                      {formatProductName(product.name)}
-                    </span>
-                    <div className="flex gap-2">
-                      <div>
-                        {" "}
-                        <BaseNbSelect onChange={updateNbProduct} />{" "}
-                      </div>
-                      <BaseButton
-                        onClick={() => {
-                          status === 1
-                            ? addToBasket(product)
-                            : addToCard(product);
-                        }}
-                        className="flex h-7 items-center px-1 py-0 hover:opacity-80"
-                        variant="primary"
-                        label="Ajouter"
+          return page.data
+            .filter((value) => {
+              return value.activated;
+            })
+            .map((product: Product) => {
+              return (
+                <div
+                  key={product.id}
+                  className="h-fit-content w-64 rounded bg-zinc-200 shadow-lg transition-all duration-200 hover:scale-105"
+                >
+                  <div className="relative h-5/6 w-full cursor-pointer">
+                    <a href={`/products/${product.id}`}>
+                      <Image
+                        src={"/images/burger.jpg"}
+                        alt={product.name}
+                        className="h-full w-full rounded-t object-cover"
+                        width={500}
+                        height={500}
                       />
+                    </a>
+                    <span className="absolute -right-4 -top-2 grid place-items-center rounded-full bg-primary p-1 font-bold text-black">
+                      {product.price}€
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-2 p-2">
+                    <div className="flex justify-between">
+                      <span className="font-bold" title={product.name}>
+                        {formatProductName(product.name)}
+                      </span>
+                      <div className="flex gap-2">
+                        <div>
+                          {" "}
+                          <BaseNbSelect onChange={updateNbProduct} />{" "}
+                        </div>
+                        <BaseButton
+                          onClick={() => {
+                            status === 1
+                              ? addToBasket(product)
+                              : addToCard(product);
+                          }}
+                          className="flex h-7 items-center px-1 py-0 hover:opacity-80"
+                          variant="primary"
+                          label="Ajouter"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          });
+              );
+            });
         })}
       </div>
       <div>

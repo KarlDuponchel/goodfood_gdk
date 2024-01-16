@@ -37,16 +37,18 @@ export function useAuth() {
       break;
   }
 
-  switch (user && user.role.name) {
-    case "accountant":
-      role = Roles.Accountant;
-      break;
-    case "admin":
-      role = Roles.Admin;
-      break;
-    default:
-      role = Roles.Client;
-      break;
+  if (user && user.role) {
+    switch (user && user.role.name) {
+      case "accountant":
+        role = Roles.Accountant;
+        break;
+      case "admin":
+        role = Roles.Admin;
+        break;
+      default:
+        role = Roles.Client;
+        break;
+    }
   }
 
   const authenticate = useCallback(() => {

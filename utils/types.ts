@@ -18,6 +18,7 @@ export type User = {
 };
 
 export type Product = {
+  activated: boolean;
   id: number;
   ID: number;
   name: string;
@@ -25,6 +26,22 @@ export type Product = {
   id_restaurant: number;
   description: string;
   image: string;
+};
+
+export type Stock = {
+  id_restaurant: number;
+  id_ingredient: number;
+  quantity: number;
+};
+
+export type Ingredient = {
+  ID: number;
+  is_allergen: boolean;
+  is_allergen_description: string;
+  name: string;
+  CreatedAt: string;
+  DeletedAt: string;
+  UpdatedAt: string;
 };
 
 export type CardProduct = {
@@ -93,4 +110,40 @@ export type Basket = {
     contentName: string;
     quantity: number;
   }>;
+};
+
+export type Supplier = {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string;
+  name: string;
+  country: string;
+  city: string;
+  address: string;
+  additional_address: string;
+  zip_code: string;
+};
+
+export type IngredientsSupplier = {
+  data: {
+    id_ingredient: number;
+    id_supplier: number;
+    price: number;
+  }[];
+};
+
+export type RestaurantSuppliers = {
+  data: {
+    id_restaurant: number;
+    id_supplier: number;
+  }[];
+};
+
+export type ProductIngredients = {
+  data: {
+    id_product: number;
+    id_ingredient: number;
+    required_quantity: number;
+  }[];
 };
