@@ -23,9 +23,6 @@ export const StocksTableTow: FunctionComponent<StocksTableRowProps> = ({
       <TableCell>{ingredient.data?.is_allergen ? "Oui" : "Non"}</TableCell>
       <TableCell>{convertDateToFr(ingredient.data?.CreatedAt)}</TableCell>
       <TableCell>{quantity}</TableCell>
-      <TableCell>
-        <Plus className="h-5 w-5 cursor-pointer hover:text-zinc-500" />
-      </TableCell>
     </TableRow>
   );
 };

@@ -46,7 +46,7 @@ export const StocksAddStock: FunctionComponent<StocksAddStockProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <BaseButton variant="black" label="Ajouter un ingrédient" />
+        <BaseButton variant="black" label="Ajouter du stock" />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -60,3 +60,24 @@ export async function addTransactionStock(body: Stock): Promise<any> {
     throw new Error(error.message);
   }
 }
+
+export async function updateRestaurant(body: Restaurant): Promise<Restaurant> {
+  const input = `${process.env.api}/restaurant/restaurants/${body.ID}`;
+  const response = await fetch(input, {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      Authorization: `Bearer ${getCookie("accessToken")}`,
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  const json = await response.json();
+  return json.data;
+}

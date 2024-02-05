@@ -51,7 +51,7 @@ export type CardProduct = {
 };
 
 export type Restaurant = {
-  ID: number;
+  ID?: number;
   name: string;
   address: string;
   additional_address: string;
@@ -146,4 +146,24 @@ export type ProductIngredients = {
     id_ingredient: number;
     required_quantity: number;
   }[];
+};
+
+export type Deliveries = {
+  id: number;
+  statusId: number;
+  status: {
+    id: number;
+    myStatus: string;
+  };
+  id_Restaurant: number;
+  id_Order: number;
+  email: string;
+  picturePath: string;
+};
+
+export type OrderContent = {
+  idContent: number;
+  contentName: string;
+  quantity: number;
+  price: number;
 };

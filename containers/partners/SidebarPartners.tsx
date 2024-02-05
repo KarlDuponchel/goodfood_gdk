@@ -2,12 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { BaseButton } from "@/components/button/Button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useFetchRestaurantById } from "@/hooks/restaurants/use_fetch_restaurant_by_id";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Archive,
   BarChart4,
+  Home,
+  LogOut,
   PackagePlus,
+  PanelTopOpen,
   ShoppingBag,
   Truck,
 } from "lucide-react";
@@ -19,6 +30,7 @@ export const SidebarPartners = () => {
   const router = useRouter();
   const pathName = usePathname();
 
+  const [styleHome, setStyleHome] = useState("");
   const [styleCommands, setStyleCommands] = useState("");
   const [styleStatistics, setStyleStatistics] = useState("");
   const [styleSupplies, setStyleSupplies] = useState("");
@@ -26,6 +38,9 @@ export const SidebarPartners = () => {
 
   useEffect(() => {
     switch (pathName) {
+      case "/partners":
+        setStyleHome("border-black text-black");
+        break;
       case "/partners/commands-management":
         setStyleCommands("border-black text-black");
         break;
@@ -39,6 +54,7 @@ export const SidebarPartners = () => {
         setStyleStocks("border-black text-black");
         break;
       default:
+        setStyleHome("border-zinc-300");
         setStyleCommands("border-zinc-300");
         setStyleStatistics("border-zinc-300");
         setStyleSupplies("border-zinc-300");
@@ -54,8 +70,6 @@ export const SidebarPartners = () => {
   if (role < 2 || !user) {
     router.push("/");
   }
-
-  if (!restaurant.data) return <div>loading...</div>;
 
   return (
     <>
@@ -73,9 +87,14 @@ export const SidebarPartners = () => {
             className="cursor-pointer text-xl font-extrabold hover:text-zinc-500 max-xl:text-lg"
             href="/partners"
           >
-            {restaurant.data.name}
+            {restaurant.data?.name}
           </a>
           <ul className="flex flex-col text-zinc-500 max-xl:text-sm">
+            <li
+              className={`cursor-pointer border-l ${styleHome} pl-4 hover:border-black hover:text-black`}
+            >
+              <a href="/partners">Restaurant</a>
+            </li>
             <li
               className={`cursor-pointer border-l ${styleCommands} pl-4 hover:border-black hover:text-black`}
             >
@@ -107,18 +126,43 @@ export const SidebarPartners = () => {
           {role == 2 ? "Gestion du restaurant" : "Gestion administrateur"}
         </span>
         <div className="hidden gap-8 max-lg:flex">
-          <a href="/partners/commands-management">
-            <Truck className="h-6 w-6" />
+          <a href="/partners">
+            <Home className="h-6 w-6" />
           </a>
-          <a href="/partners/supplies">
-            <PackagePlus className="h-6 w-6" />
-          </a>
-          <a href="/partners/stocks">
-            <Archive className="h-6 w-6" />
-          </a>
-          <a href="/partners/statistics">
-            <BarChart4 className="h-6 w-6" />
-          </a>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <PanelTopOpen className="h-6 w-6" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Gestion du restaurant</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => router.push("/partners/commands-management")}
+              >
+                <Truck className="mr-2 h-4 w-4" />
+                <span>Livraisons</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/partners/supplies")}
+              >
+                <PackagePlus className="mr-2 h-4 w-4" />
+                <span>Produits</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/partners/stocks")}>
+                <Archive className="mr-2 h-4 w-4" />
+                <span>Stocks</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/partners/statistics")}
+              >
+                <BarChart4 className="mr-2 h-4 w-4" />
+                <span>Statistiques</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <span className="cursor-pointer" onClick={logout}>
+            <LogOut className="h-6 w-6" />
+          </span>
         </div>
       </div>
     </>

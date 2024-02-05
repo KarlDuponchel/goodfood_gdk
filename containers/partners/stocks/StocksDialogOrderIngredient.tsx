@@ -86,7 +86,7 @@ export const StocksDialogOrderIngredient: FunctionComponent<
         </div>
         <DialogFooter className="flex items-center gap-1 pt-4">
           <span>
-            {selectValue ? `Total : ${Number(selectValue) * price}` : ""}
+            {selectValue ? `Total : ${Number(selectValue) * price}€` : ""}
           </span>
           <BaseButton
             variant="black"

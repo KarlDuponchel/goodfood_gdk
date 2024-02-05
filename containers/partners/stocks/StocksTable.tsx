@@ -6,7 +6,6 @@ import {
   Table,
   TableBody,
   TableCaption,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -44,7 +43,6 @@ export const StocksTable: FunctionComponent<StocksTableProps> = ({
               <TableHead>Est allergène ?</TableHead>
               <TableHead>Créé le</TableHead>
               <TableHead>Quantité</TableHead>
-              <TableHead>Gérer</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
